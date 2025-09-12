@@ -1,0 +1,14 @@
+{
+"name": "Deploy Dev",
+"on": { "workflow_dispatch": {}, "push": { "branches": ["develop"] } },
+"jobs": {
+"deploy": {
+"runs-on": "ubuntu-latest",
+"environment": "sviluppo",
+"steps": [
+{ "name": "Checkout", "uses": "actions/checkout@v4" },
+{ "name": "Ping", "run": "echo deploy-dev skeleton ok" }
+]
+}
+}
+}
