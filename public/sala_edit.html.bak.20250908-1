@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>== CLONE == Modifica Sala Produzione</title>
+  <link rel="stylesheet" href="css/layout.css">
+</head>
+<body>
+  <!-- Banner ambiente -->
+  <div id="env-badge" style="position: fixed; top: 10px; right: 10px; padding: 6px 12px; border-radius: 4px; font-weight: bold; z-index: 9999;">CLONE</div>
+
+  <!-- Top menu dinamico -->
+  <div id="top-menu-placeholder"></div>
+
+  <!-- Layout principale -->
+  <div class="layout-container">
+
+    <!-- Sidebar sinistra -->
+    <aside class="sidebar-filtri">
+      <div class="sidebar-header">
+        <img src="https://www.lotarpersiane.it/wp-content/uploads/2025/02/Logo-LOTAR-positivo-1.png" alt="Logo" class="logo-sidebar" />
+        <h3 class="titolo-sidebar">LO.TA.R.<br/>PRODU-MAX v.1.0</h3>
+        <p class="ruolo-sidebar">Ruolo: <span id="ruolo-utente"></span></p>
+      </div>
+    </aside>
+
+    <!-- Contenuto -->
+    <main class="contenuto-principale">
+      <div class="form-wrapper">
+        <h2>Modifica lavorazione - Sala Produzione</h2>
+        <form id="salaForm">
+          <div><strong>Nome:</strong> <span id="nome"></span></div>
+          <div><strong>Tipo Cliente:</strong> <span id="tipo_cliente"></span></div>
+          <div><strong>Tipo Lavorazione:</strong> <span id="tipo_lavorazione"></span></div>
+          <div><strong>Tipo Linea:</strong> <span id="tipo_linea"></span></div>
+          <div><strong>N° Pezzi:</strong> <span id="pezzi"></span></div>
+          <div><strong>RAL 1:</strong> <span id="ral1"></span></div>
+          <div><strong>RAL 2:</strong> <span id="ral2"></span></div>
+          <div><strong>Metriquadri:</strong> <span id="metriquadri"></span></div>
+          <div><strong>Ordine Vernice:</strong> <span id="ordine_vernice"></span></div>
+          <div><strong>Gita:</strong> <span id="gita"></span></div>
+          <div><strong>Ingresso:</strong> <span id="ingresso"></span></div>
+
+          <div>
+            <strong>Smontaggio:</strong>
+            <span id="smontaggio_read" style="display:none;"></span>
+            <label id="smontaggio_check_container">
+              <input type="checkbox" id="smontaggio_check"> Imposta data odierna
+            </label>
+          </div>
+
+          <div>
+            <strong>Falegnameria:</strong>
+            <span id="falegnameria_read" style="display:none;"></span>
+            <label id="falegnameria_check_container">
+              <input type="checkbox" id="falegnameria_check"> Imposta data odierna
+            </label>
+          </div>
+
+          <div>
+            <strong>Finito:</strong>
+            <span id="finito_sala_read" style="display:none;">✔️</span>
+            <label id="finito_sala_check_container">
+              <input type="checkbox" id="finito_sala_check"> Contrassegna come finito
+            </label>
+          </div>
+
+          <button type="submit">Salva modifiche</button>
+          <button type="button" id="annullaBtn">Annulla</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <!-- Script -->
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    const ruolo = urlParams.get('ruolo') || sessionStorage.getItem("ruolo") || "sala";
+    if (ruolo) sessionStorage.setItem("ruolo", ruolo);
+
+    if (!id) {
+      alert('ID non fornito.');
+      throw new Error('ID mancante');
+    }
+
+    // Imposta ruolo visivo
+    document.getElementById("ruolo-utente").textContent = ruolo;
+
+    // Caricamento topnav
+    fetch(`partials/topnav_${ruolo}.html`)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("top-menu-placeholder").innerHTML = html;
+      });
+
+    // Caricamento dati
+    fetch(`/api/produzione/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('nome').textContent = data.nome_lavoro;
+        document.getElementById('tipo_cliente').textContent = data.tipo_cliente;
+        document.getElementById('tipo_lavorazione').textContent = data.tipo_lavorazione;
+        document.getElementById('tipo_linea').textContent = data.tipo_linea;
+        document.getElementById('pezzi').textContent = data.pezzi;
+        document.getElementById('ral1').textContent = data.ral1 || '';
+        document.getElementById('ral2').textContent = data.ral2 || '';
+        document.getElementById('metriquadri').textContent = data.metriquadri;
+        document.getElementById('ordine_vernice').textContent = data.ordine_vernice ? '✔️' : '';
+        document.getElementById('gita').textContent = data.gita || '';
+        document.getElementById('ingresso').textContent = formatData(data.ingresso);
+
+        gestisciCampo('smontaggio', data.smontaggio);
+        gestisciCampo('falegnameria', data.falegnameria);
+        gestisciCampo('finito_sala', data.finito_sala);
+      });
+
+    function gestisciCampo(nome, valore) {
+      const read = document.getElementById(`${nome}_read`);
+      const container = document.getElementById(`${nome}_check_container`);
+      if (valore && valore !== '0000-00-00' && valore !== 0) {
+        read.textContent = nome === 'finito_sala' ? '✔️' : formatData(valore);
+        read.style.display = 'inline';
+        container.style.display = 'none';
+      }
+    }
+
+    document.getElementById('salaForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const aggiornamenti = {};
+      if (document.getElementById('smontaggio_check')?.checked) {
+        aggiornamenti.smontaggio = new Date().toISOString().split('T')[0];
+      }
+      if (document.getElementById('falegnameria_check')?.checked) {
+        aggiornamenti.falegnameria = new Date().toISOString().split('T')[0];
+      }
+      if (document.getElementById('finito_sala_check')?.checked) {
+        aggiornamenti.finito_sala = true;
+      }
+
+      if (Object.keys(aggiornamenti).length === 0) {
+        alert('⚠️ Nessuna modifica da salvare.');
+        return;
+      }
+
+      fetch(`/api/produzione/sala/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(aggiornamenti)
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('Errore salvataggio');
+        window.location.href = `vista_dinamica.html?ruolo=${ruolo}&success=true`;
+      })
+      .catch(err => {
+        console.error('Errore fetch PUT:', err);
+        alert('❌ Errore nel salvataggio');
+      });
+    });
+
+    document.getElementById('annullaBtn').addEventListener('click', () => {
+      window.location.href = `vista_dinamica.html?ruolo=${ruolo}`;
+    });
+
+    function formatData(dateStr) {
+      if (!dateStr) return '';
+      const [yyyy, mm, dd] = dateStr.split('T')[0].split('-');
+      return `${dd}-${mm}-${yyyy}`;
+    }
+  </script>
+</body>
+</html>

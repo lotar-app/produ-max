@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>== CLONE == Modifica completa lavorazione</title>
+  <link rel="stylesheet" href="css/layout.css" />
+  <style>
+    input[type="checkbox"] {
+      transform: scale(1.2);
+      margin-right: 6px;
+    }
+    input[readonly], select[disabled] {
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+  <!-- Banner ambiente -->
+  <div id="env-badge" style="position: fixed; top: 10px; right: 10px; padding: 6px 12px; border-radius: 4px; font-weight: bold; z-index: 9999;">CLONE</div>
+
+  <!-- Top menu -->
+  <div id="top-menu-placeholder"></div>
+
+  <!-- Layout due colonne -->
+  <div class="layout-container">
+    <!-- Sidebar -->
+    <aside class="sidebar-filtri">
+      <div class="sidebar-header">
+        <img src="https://www.lotarpersiane.it/wp-content/uploads/2025/02/Logo-LOTAR-positivo-1.png" alt="Logo" class="logo-sidebar" />
+        <h3 class="titolo-sidebar">LO.TA.R.<br/>PRODU-MAX v.1.0</h3>
+        <p class="ruolo-sidebar">Ruolo: <span id="ruolo-utente"></span></p>
+      </div>
+    </aside>
+
+    <!-- Contenuto principale -->
+    <main class="contenuto-principale">
+      <div class="form-wrapper">
+        <h2>Modifica completa lavorazione</h2>
+        <form id="adminForm" autocomplete="off">
+
+          <label>ID</label>
+          <input type="number" id="id" name="id" readonly />
+
+          <label>Nome cliente</label>
+          <input type="text" id="nome" name="nome" required />
+
+          <label>Tipo Cliente</label>
+          <select id="tipo_cliente_id" name="tipo_cliente_id" required></select>
+
+          <label>Tipo Lavorazione</label>
+          <select id="tipo_lavorazione_id" name="tipo_lavorazione_id" required></select>
+
+          <label>Tipo Linea</label>
+          <select id="tipo_linea_id" name="tipo_linea_id" required></select>
+
+          <label>Note</label>
+          <textarea id="note" name="note" rows="2"></textarea>
+
+          <label><input type="checkbox" id="pagamento" name="pagamento" /> Pagamento</label>
+          <label><input type="checkbox" id="ordine_vernice" name="ordine_vernice" /> Ordine vernice</label>
+          <label><input type="checkbox" id="finito_sala" name="finito_sala" /> Finito sala</label>
+
+          <label>Pezzi</label>
+          <input type="number" id="pezzi" name="pezzi" min="1" required />
+
+          <label>RAL 1</label>
+          <input type="text" id="ral1" name="ral1" />
+
+          <label>RAL 2</label>
+          <input type="text" id="ral2" name="ral2" />
+
+          <label>Metri quadri</label>
+          <input type="number" step="0.01" id="metriquadri" name="metriquadri" />
+
+          <label>Gita</label>
+          <input type="text" id="gita" name="gita" />
+          
+          <label for="urgente">Urgente</label>
+          <input type="date" id="urgente" name="urgente" />
+
+          <label for="viaggio">Viaggio</label>
+          <input type="date" id="viaggio" name="viaggio" />
+
+          <label for="ufo">Ufo</label>
+          <input type="number" id="ufo" name="ufo" />
+
+          <label for="loc">Lock</label>
+          <input type="number" name="loc" id="loc" />
+
+          <label for="bolt">Bolt</label>
+          <input type="number" id="bolt" name="bolt" />
+
+          <label>Ingresso</label>
+          <input type="date" id="ingresso" name="ingresso" required />
+
+          <label>Smontaggio</label>
+          <input type="date" id="smontaggio" name="smontaggio" />
+
+          <label>Falegnameria</label>
+          <input type="date" id="falegnameria" name="falegnameria" />
+
+          <label>Finito Admin</label>
+          <input type="date" id="finito_admin" name="finito_admin" />
+
+          <label>Consegna</label>
+          <input type="date" id="consegna" name="consegna" />
+
+          <label>Ore Smontaggio</label>
+          <input type="number" step="0.01" id="ore_smontaggio" name="ore_smontaggio" />
+
+          <label>Ore Falegn Extra</label>
+          <input type="number" step="0.01" id="ore_falegn_extra" name="ore_falegn_extra" />
+
+          <label>Ore Falegn Rinforzo</label>
+          <input type="number" step="0.01" id="ore_falegn_rinforzo" name="ore_falegn_rinforzo" />
+
+          <label>Ore Produzione</label>
+          <input type="number" step="0.01" id="ore_produzione" name="ore_produzione" />
+
+          <label><input type="checkbox" id="trasparente" name="trasparente" /> Trasparente</label>
+          <label><input type="checkbox" id="a_corpo" name="a_corpo" /> A corpo</label>
+          <label><input type="checkbox" id="f_magazzino" name="f_magazzino" /> Franco Magazzino</label>
+          <label><input type="checkbox" id="standby" name="standby" /> Fermo</label>
+
+          <button type="submit">Salva modifiche</button>
+          <button type="button" id="annullaBtn">Annulla</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <!-- Script -->
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const ruolo = params.get("ruolo") || sessionStorage.getItem("ruolo") || "admin";
+    sessionStorage.setItem("ruolo", ruolo);
+    document.getElementById("ruolo-utente").textContent = ruolo;
+
+    fetch(`partials/topnav_${ruolo}.html`)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("top-menu-placeholder").innerHTML = html;
+      });
+
+    document.getElementById('annullaBtn').addEventListener('click', () => {
+      window.location.href = `vista_dinamica.html?ruolo=${ruolo}`;
+    });
+  </script>
+  <script src="js/admin_edit.js"></script>
+</body>
+</html>

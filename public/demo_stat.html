@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Statistiche Produzione</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1440px;
+      margin: auto;
+      padding: 20px;
+    }
+    .filter-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .checkbox-group label {
+      margin-right: 20px;
+    }
+    .period-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    canvas {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Statistiche di Produzione</h2>
+  <div class="filter-section">
+    <div class="checkbox-group">
+      <strong>Tipologie da includere:</strong><br>
+      <label><input type="checkbox" value="Tipo A" checked> Tipo A</label>
+      <label><input type="checkbox" value="Tipo B" checked> Tipo B</label>
+      <label><input type="checkbox" value="Tipo C" checked> Tipo C</label>
+    </div>
+
+    <div class="period-group">
+      <strong>Periodo base:</strong>
+      <label>Da <input type="date" id="baseStart"></label>
+      <label>A <input type="date" id="baseEnd"></label>
+    </div>
+
+    <div class="period-group">
+      <strong>Confronta con:</strong>
+      <label>Da <input type="date" id="compareStart"></label>
+      <label>A <input type="date" id="compareEnd"></label>
+    </div>
+
+    <button onclick="generaStatistiche()">Visualizza Statistiche</button>
+  </div>
+
+  <div id="output" style="display:none">
+    <table id="datiTabella">
+      <thead>
+        <tr><th>Tipo</th><th>Periodo base</th><th>Confronto</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <canvas id="grafico"></canvas>
+  </div>
+
+  <script>
+    function generaStatistiche() {
+      const tipi = Array.from(document.querySelectorAll('.checkbox-group input:checked')).map(el => el.value);
+      const baseStart = document.getElementById('baseStart').value;
+      const baseEnd = document.getElementById('baseEnd').value;
+      const compareStart = document.getElementById('compareStart').value;
+      const compareEnd = document.getElementById('compareEnd').value;
+
+      if (!baseStart || !baseEnd || !compareStart || !compareEnd || tipi.length === 0) {
+        alert('Compila tutti i campi e seleziona almeno un tipo.');
+        return;
+      }
+
+      const baseData = tipi.map(t => Math.floor(Math.random() * 100));
+      const compareData = tipi.map(t => Math.floor(Math.random() * 100));
+
+      const tbody = document.querySelector('#datiTabella tbody');
+      tbody.innerHTML = '';
+      tipi.forEach((tipo, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${tipo}</td><td>${baseData[i]}</td><td>${compareData[i]}</td>`;
+        tbody.appendChild(tr);
+      });
+
+      const ctx = document.getElementById('grafico').getContext('2d');
+      if (window.myChart) window.myChart.destroy();
+      window.myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: tipi,
+          datasets: [
+            {
+              label: 'Periodo base',
+              data: baseData,
+              backgroundColor: 'rgba(75, 192, 192, 0.5)'
+            },
+            {
+              label: 'Confronto',
+              data: compareData,
+              backgroundColor: 'rgba(255, 99, 132, 0.5)'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      document.getElementById('output').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

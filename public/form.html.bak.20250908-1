@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nuova Lavorazione</title>
+  <link rel="stylesheet" href="css/layout.css" />
+  <style>
+    .layout {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .sidebar-filtri {
+      width: 280px;
+      background-color: #fff;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+      box-sizing: border-box;
+    }
+
+    .sidebar-filtri img {
+      max-width: 200px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Barra di navigazione in alto -->
+  <div id="top-menu-placeholder"></div>
+
+  <div class="layout">
+    <!-- Colonna sinistra -->
+    <aside class="sidebar-filtri">
+  <div class="sidebar-header">
+    <img src="https://www.lotarpersiane.it/wp-content/uploads/2025/02/Logo-LOTAR-positivo-1.png" alt="Logo" class="logo-sidebar" />
+    <h3 class="titolo-sidebar">LO.TA.R.<br/>PRODU-MAX v.1.0</h3>
+    <p class="ruolo-sidebar">Ruolo: <span id="ruolo-utente"></span></p>
+  </div>
+</aside>
+
+    <main class="main-content">
+      <div class="form-wrapper">
+        <h2>Inserisci una nuova lavorazione</h2>
+        <form id="produzioneForm" autocomplete="off">
+            <form id="produzioneForm" autocomplete="off">
+
+        <label for="nome">Nome <span class="required-asterisk">*</span></label>
+        <div style="position: relative;">
+          <input type="text" id="nome" name="nome" required />
+          <div id="suggerimenti" class="autocomplete-box"></div>
+        </div>
+
+        <label for="tipo_cliente_id">Tipo Cliente <span class="required-asterisk">*</span></label>
+        <select id="tipo_cliente_id" name="tipo_cliente_id" required>
+          <option value="">Seleziona un tipo di cliente</option>
+        </select>
+
+        <label for="tipo_lavorazione_id">Tipo Lavorazione <span class="required-asterisk">*</span></label>
+        <select id="tipo_lavorazione_id" name="tipo_lavorazione_id" required>
+          <option value="">Seleziona una lavorazione</option>
+        </select>
+
+        <label for="tipo_linea_id">Tipo Linea <span class="required-asterisk">*</span></label>
+        <select id="tipo_linea_id" name="tipo_linea_id" required>
+          <option value="">Seleziona una linea</option>
+        </select>
+
+        <label for="pezzi">Pezzi <span class="required-asterisk">*</span></label>
+        <input type="number" id="pezzi" name="pezzi" required min="1" />
+
+        <div id="sezione_ral">
+          <div>
+            <label for="ral1">RAL 1</label>
+            <input type="text" id="ral1" name="ral1" maxlength="50" />
+          </div>
+          <div>
+            <label for="ral2">RAL 2</label>
+            <input type="text" id="ral2" name="ral2" maxlength="50" />
+          </div>
+        </div>
+
+        <label for="metriquadri">Metri quadri</label>
+        <input type="number" id="metriquadri" name="metriquadri" step="0.01" />
+
+        <div id="sezione_vernice">
+          <label>
+            <input type="checkbox" id="ordine_vernice" name="ordine_vernice" />
+            Ordine vernice
+          </label>
+        </div>
+
+        <label for="gita">Gita</label>
+        <input type="text" id="gita" name="gita" maxlength="50" />
+
+        <label for="ingresso">Ingresso <span class="required-asterisk">*</span></label>
+        <input type="date" id="ingresso" name="ingresso" required />
+
+        <label for="urgente">Urgente</label>
+        <input type="date" id="urgente" name="urgente" />
+
+        <label for="viaggio">Viaggio</label>
+        <input type="date" id="viaggio" name="viaggio" />
+
+        <label for="ufo">Ufo</label>
+        <input type="number" id="ufo" name="ufo" />
+
+        <label for="loc">Lock</label>
+        <input type="number" id="loc" name="loc" />
+
+        <label for="bolt">Bolt</label>
+        <input type="number" id="bolt" name="bolt" />
+
+        <label>
+          <input type="checkbox" id="a_corpo" name="a_corpo" onchange="toggleMutuallyExclusive(this, 'trasparente')" />
+          A corpo
+        </label>
+
+        <label>
+          <input type="checkbox" id="trasparente" name="trasparente" onchange="toggleMutuallyExclusive(this, 'a_corpo')" />
+          Trasparente
+        </label>
+
+        <label>
+          <input type="checkbox" id="f_magazzino" name="f_magazzino" />
+          Franco Magazzino
+        </label>
+
+        <label>
+          <input type="checkbox" id="standby" name="standby" />
+          Fermo
+        </label>
+
+        <!-- Campi hidden per valori automatici se tipo_linea = Sverniciatura -->
+        <input type="hidden" id="ore_smontaggio" name="ore_smontaggio" />
+        <input type="hidden" id="ore_falegnameria" name="ore_falegnameria" />
+        <!-- Fine campi hidden -->
+
+        <button type="submit">Inserisci</button>
+      </form>
+        </form>
+
+        <div id="successMessage" class="success-message" style="display: none;"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/form.js"></script>
+  <script src="js/vista_dinamica.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const ruolo = params.get('ruolo') || 'sala';
+
+    fetch(`/partials/topnav_${ruolo}.html`)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('top-menu-placeholder').innerHTML = html;
+      });
+
+    document.getElementById('ruolo-label').textContent = `Ruolo: ${ruolo}`;
+
+    function toggleMutuallyExclusive(checkbox, otherId) {
+      if (checkbox.checked) {
+        document.getElementById(otherId).checked = false;
+      }
+    }
+  </script>
+  <script>
+  // Mostra ruolo utente nella sidebar
+  window.addEventListener('DOMContentLoaded', () => {
+    const ruolo = sessionStorage.getItem('ruolo') || 'sala';
+    const spanRuolo = document.getElementById('ruolo-utente');
+    if (ruolo && spanRuolo) {
+      spanRuolo.textContent = ruolo;
+    }
+  });
+</script>
+</body>
+</html>

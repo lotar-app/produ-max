@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Report - Lavorazioni senza data</title>
+  <link rel="stylesheet" href="/css/layout.css">
+ 
+ <style>
+  /* --- STILE SCHERMO --- */
+  .layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .sidebar-filtri {
+    width: 280px;
+    background-color: #fff;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+  }
+
+  .sidebar-filtri img {
+    max-width: 200px;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .main-content {
+    flex-grow: 1;
+    padding: 30px;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .report-container {
+    max-width: 1200px;
+    width: 100%;
+  }
+
+  .pulsante-stampa {
+    display: block;
+    margin: 0 auto 40px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    table-layout: fixed;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    text-align: left;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  th {
+    background-color: #f5f5f5;
+  }
+
+  /* Colonne */
+  th:nth-child(1), td:nth-child(1) { width: 50px; }
+  th:nth-child(2), td:nth-child(2) { width: 180px; }
+  th:nth-child(3), td:nth-child(3),
+  th:nth-child(4), td:nth-child(4),
+  th:nth-child(5), td:nth-child(5) { width: 130px; }
+  th:nth-child(6), td:nth-child(6) { width: 60px; }
+  th:nth-child(7), td:nth-child(7),
+  th:nth-child(8), td:nth-child(8),
+  th:nth-child(9), td:nth-child(9) { width: 90px; }
+
+  h1 {
+    text-align: center;
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+
+  /* --- STAMPA --- */
+  @media print {
+    .pulsante-stampa,
+    .sidebar-filtri,
+    .top-nav {
+      display: none !important;
+    }
+
+    .layout {
+      display: block !important;
+      height: auto !important;
+    }
+
+    .main-content {
+      display: block !important;
+      padding: 0 !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+
+    .report-container {
+      width: 100%;
+      padding: 0 10mm;
+    }
+
+    table {
+      font-size: 10pt;
+      table-layout: fixed;
+      word-wrap: break-word;
+    }
+
+    th, td {
+      padding: 3px 6px !important;
+      line-height: 1.1 !important;
+      word-break: break-word;
+    }
+
+    tr, td, th {
+      page-break-inside: avoid !important;
+    }
+
+    @page {
+      size: A4 landscape;
+      margin: 10mm;
+    }
+
+}
+
+    html, body {
+      height: auto !important;
+      overflow: visible !important;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    tbody {
+      display: table-row-group;
+    }
+
+    tr {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+  }
+</style>
+
+</head>
+<body>
+  <!-- Barra di navigazione in alto -->
+  <div id="top-menu-placeholder"></div>
+
+  <div class="layout">
+    <!-- Colonna sinistra: solo logo + ruolo -->
+    <aside class="sidebar-filtri">
+  <div class="sidebar-header">
+    <img src="https://www.lotarpersiane.it/wp-content/uploads/2025/02/Logo-LOTAR-positivo-1.png" alt="Logo" class="logo-sidebar" />
+    <h3 class="titolo-sidebar">LO.TA.R.<br/>PRODU-MAX v.1.0</h3>
+    <p class="ruolo-sidebar">Ruolo: <span id="ruolo-utente"></span></p>
+  </div>
+</aside>
+
+    <!-- Contenuto principale -->
+    <main class="main-content">
+        <div class="report-container">
+      <h1 id="titolo-report">Report: Lavorazioni senza data</h1>
+
+      <h3 id="conteggio-record" style="text-align:center; margin-bottom: 20px;">
+        Caricamento in corso...
+      </h3>
+
+      <button id="stampa-report" class="pulsante-stampa">Stampa</button>
+
+      <table id="tabella-report">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome Lavoro</th>
+            <th>Tipo Cliente</th>
+            <th>Tipo Lavorazione</th>
+            <th>Tipo Linea</th>
+            <th>Pezzi</th>
+            <th>Ingresso</th>
+            <th>Smontaggio</th>
+            <th>Giorni Trascorsi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="9">Caricamento...</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const ruolo = params.get('ruolo') || 'sala';
+
+    // Caricamento barra superiore
+    fetch(`/partials/topnav_${ruolo}.html`)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('top-menu-placeholder').innerHTML = html;
+      });
+
+    // Ruolo visibile in sidebar (solo se esiste elemento con ID corretto)
+const ruoloLabel = document.getElementById('ruolo-label');
+if (ruoloLabel) ruoloLabel.textContent = `Ruolo: ${ruolo}`;
+
+// Titolo dinamico
+const titolo = document.getElementById('titolo-report');
+if (window.location.search.includes('smontaggio')) {
+  titolo.textContent = 'Report: Per Smontaggio';
+} else if (window.location.search.includes('falegnameria')) {
+  titolo.textContent = 'Report: Per Falegnameria';
+} else if (window.location.search.includes('finito_admin')) {
+  titolo.textContent = 'Report: Da Completare';
+} else if (window.location.search.includes('consegna')) {
+  titolo.textContent = 'Report: Da Consegnare';
+} else {
+  titolo.textContent = 'Report: Lavorazioni senza data specifica';
+}
+  </script>
+
+  <script src="/js/report_date_mancanti.js"></script>
+  <script>
+  // Mostra ruolo utente nella sidebar
+  window.addEventListener('DOMContentLoaded', () => {
+    const ruolo = sessionStorage.getItem('ruolo') || 'sala';
+    const spanRuolo = document.getElementById('ruolo-utente');
+    if (ruolo && spanRuolo) {
+      spanRuolo.textContent = ruolo;
+    }
+  });
+</script>
+</body>
+</html>
