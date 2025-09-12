@@ -1,0 +1,53 @@
+node_modules/
+npm-debug.log*
+yarn*.log
+pnpm-debug.log*
+
+Env / segreti
+.env
+.env.*
+!.env.example
+
+PHP / Composer (se presente)
+vendor/
+composer.phar
+
+Log e cache
+logs/
+.log
+storage/logs/
+storage/.log
+tmp/
+temp/
+.cache/
+
+Build / artefatti
+dist/
+build/
+coverage/
+
+OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+Backup e dump (ovunque)
+*.sql
+*.tar
+*.gz
+*.zip
+
+Pattern ancorati alla root
+/backup_*
+/backup_/
+/dump_
+/dump_/
+/export_
+/export_*/
+/mysql/
+/snap/
+mysql
+/mysql
+/mysql/
+/mysql/**

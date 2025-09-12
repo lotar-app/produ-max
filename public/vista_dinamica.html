@@ -1,0 +1,370 @@
+<!-- vista.html aggiornata -->
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vista Produzione</title>
+  <link rel="stylesheet" href="css/layout.css" />
+</head>
+<body>
+  <script src="js/env.js"></script>
+  <div id="top-menu-placeholder"></div>
+  <!-- Titolo base gestito da env.js -->
+  <script>
+  const params = new URLSearchParams(window.location.search);
+  const ruolo = params.get('ruolo');
+  if (ruolo) sessionStorage.setItem('ruolo', ruolo);
+</script>
+<div id="overlay-manutenzione" style="
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: white;
+  z-index: 99999;
+  text-align: center;
+  padding-top: 100px;
+">
+  <h1>🚧 Modalità Manutenzione</h1>
+  <p>Il sistema è temporaneamente non disponibile.</p>
+</div>
+
+  <div id="env-badge" style="position: fixed; top: 10px; right: 10px; padding: 6px 12px; border-radius: 4px; font-weight: bold; z-index: 9999;"></div>
+<div id="banner-manutenzione" style="
+  display: none;
+  width: 100%;
+  background-color: orange;
+  color: black;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 9998;
+  position: fixed;
+  top: 0;
+  left: 0;
+">
+⚠️ MODALITÀ MANUTENZIONE ATTIVA
+</div>
+  
+
+  <!-- Layout a due colonne -->
+  <div class="layout-container">
+  
+    <!-- Sidebar Filtri -->
+    <aside class="sidebar-filtri">
+      <div class="sidebar-header">
+        <img src="https://www.lotarpersiane.it/wp-content/uploads/2025/02/Logo-LOTAR-positivo-1.png" alt="Logo" class="logo-sidebar" />
+        <h3 class="titolo-sidebar">LO.TA.R.<br/>PRODU-MAX v. 2.1</h3>
+        <p class="ruolo-sidebar">Ruolo: <span id="ruolo-utente"></span></p>
+      </div>
+
+      <h2 class="titolo-filtri">🔎 Filtraggio dei dati</h2>
+      <form id="form-filtri" class="filtro-container">
+        
+       
+  <div class="filtro-riga">
+    <div class="filtro-blocco">
+      <label for="filtro-nome">Nome</label>
+      <input id="filtro-nome" type="text" />
+    </div>
+
+    <div class="filtro-blocco">
+  <label for="filtro-nome-vuoto">Vista elenco</label>
+  <select id="filtro-nome-vuoto">
+    <option value="tutti">Tutti</option>
+    <option value="vuoti">Archiviati</option>
+    <option value="pieni">In produzione</option>
+  </select>
+    </div>
+
+
+    <div class="filtro-blocco">
+      <label for="filtro-tipo-cliente">Tipologia</label>
+      <select id="filtro-tipo-cliente">
+        <option value="">Tutti</option>
+      </select>
+    </div>
+
+    <div class="filtro-blocco">
+      <label for="filtro-tipo-lavorazione">Lavorazione</label>
+      <select id="filtro-tipo-lavorazione">
+        <option value="">Tutti</option>
+      </select>
+    </div>
+
+    <div class="filtro-blocco">
+      <label for="filtro-tipo-linea">Linea</label>
+      <select id="filtro-tipo-linea">
+        <option value="">Tutte</option>
+      </select>
+    </div>
+
+    <div class="filtro-blocco">
+      <label for="filtro-ral1">RAL 1</label>
+      <input id="filtro-ral1" type="text" class="w-full border p-1" />
+    </div>
+
+    <div class="filtro-blocco">
+      <label for="filtro-ral2">RAL 2</label>
+      <input id="filtro-ral2" type="text" class="w-full border p-1" />
+    </div>
+
+    <div class="filtro-checkbox">
+      <label><input type="checkbox" id="filtro-vernice" /> NO Vernice</label>
+    </div>
+
+    <div class="filtro-blocco">
+      <label for="filtro-ingresso">Ingresso</label>
+      <input id="filtro-ingresso" type="date" />
+    </div>
+
+    <div class="filtro-blocco">
+      <label for="filtro-smontaggio">Smontaggio</label>
+      <input id="filtro-smontaggio" type="date" />
+    </div>
+
+    <div class="filtro-blocco">
+      <label for="filtro-falegnameria">Falegnameria</label>
+      <input id="filtro-falegnameria" type="date" />
+    </div>
+
+    <div class="filtro-blocco">
+      <label for="filtro-finito-admin">Finito Admin</label>
+      <input id="filtro-finito-admin" type="date" />
+    </div>
+
+    <div class="filtro-blocco">
+      <label for="filtro-consegna">Consegna</label>
+      <input id="filtro-consegna" type="date" />
+    </div>
+
+    <div class="filtro-blocco">
+      <label for="filtro-progressivo">N° Progr</label>
+      <input id="filtro-progressivo" type="number" />
+    </div>
+
+    <div class="filtro-checkbox">
+      <label><input type="checkbox" id="filtro-a-corpo" /> A corpo</label>
+    </div>
+
+    <div class="filtro-checkbox">
+      <label><input type="checkbox" id="filtro-trasparente" /> Trasp</label>
+    </div>
+
+    <div class="filtro-checkbox">
+      <label><input type="checkbox" id="filtro-urgente" /> Urgente</label>
+    </div>
+
+    <div class="filtro-checkbox">
+      <label><input type="checkbox" id="filtro-standby" /> Fermo</label>
+    </div>
+
+    <div>
+      <button id="reset-filtri" type="button">Reset filtri</button>
+    </div>
+  </div>
+
+      </form>
+    </aside>
+
+    <!-- Sezione contenuto principale -->
+    <main class="contenuto-principale">
+      <div id="alert-success" class="success-message" style="display: none;">
+        ✅ Modifiche salvate con successo!
+      </div>
+
+      <div class="vista-header">
+        <h2 id="titolo-vista"></h2>
+      </div>
+
+      <div id="conteggio-records-inizio" class="conteggio-records"></div>
+
+      <div class="tabella-scroll-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th data-key="urgente_flag">Urg</th>
+
+              <th id="th-nome" data-key="nome_lavoro" style="cursor:pointer">Nome</th>
+              <th data-key="tipo_cliente">Tipologia</th>
+              <th data-key="tipo_lavorazione">Lavorazione</th>
+              <th data-key="tipo_linea">Linea</th>
+              <th data-key="azzurro">Az</th>
+              <th data-key="fucsia">Fu</th>
+              <th data-key="nero_finito_sala">Ne</th>
+              <th data-key="verde">Ve</th>
+              <th data-key="pagamento">€</th>
+              <th data-key="pezzi">PZ</th>
+              <th data-key="ral1">RAL 1</th>
+              <th data-key="ral2">RAL 2</th>
+              <th data-key="ordine_vernice">Vern</th>
+              <th data-key="metriquadri">MQ</th>
+              <th data-key="gita">Gita</th>
+
+              <th id="th-ingresso" data-key="ingresso" style="cursor:pointer">Ingr</th>
+              <th data-key="smontaggio">Smont</th>
+              <th data-key="falegnameria">Falegn</th>
+              <th data-key="finito_sala">Finito Sala</th>
+              <th data-key="finito_admin">Finito Admin</th>
+              <th data-key="consegna">Consegna</th>
+              <th data-key="ore_smontaggio">Ore Smont</th>
+              <th data-key="ore_falegn_extra">Ore Fal Extra</th>
+              <th data-key="ore_falegn_rinforzo">Ore Fal Rinf</th>
+              <th data-key="ore_falegnameria">Tot Ore Fal</th>
+              <th data-key="ore_produzione">Ore Prod</th>
+              <th data-key="ore_magazz">Ore Mag</th>
+
+              <th id="th-tot-ore" data-key="ore_totali" style="cursor:pointer">Tot Ore</th>
+
+              <th data-key="giorni_trascorsi">GG Trasc</th>
+              <th data-key="giorni_consegna">GG Cons</th>
+              <th data-key="giorni_lavorazione">GG Lav</th>
+
+              <th id="th-giorni-totale" data-key="giorni_totale" style="cursor:pointer">GG Tot</th>
+
+              <th id="th-progressivo" data-key="n_progressivo" style="cursor:pointer">Progressivo</th>
+              <th data-key="urgente_data">Urgente</th>
+              <th data-key="viaggio">Viaggio</th>
+              <th data-key="ufo">UFO</th>
+              <th data-key="loc">LOCK</th>
+              <th data-key="bolt">BOLT</th>
+              <th data-key="a_corpo">A Corpo</th>
+              <th data-key="trasparente">Trasp</th>
+              <th data-key="f_magazzino">F. Mag</th>
+              <th data-key="note">Note</th>
+              <th data-key="standby">Fermo</th>
+
+              <th id="th-id" data-key="id" style="cursor:pointer">ID</th>
+
+              <th data-key="azioni">Azioni</th>
+            </tr>
+</thead>
+
+
+          <tbody id="tabellaBody"></tbody>
+        </table>
+      </div>
+
+      <div id="conteggio-records-fine" class="conteggio-records"></div>
+    </main>
+  </div>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    console.log('⏳ DOM pronto, avvio caricamento topnav e script...');
+
+    // 1. Recupera ruolo da sessionStorage o URL
+    let ruolo = sessionStorage.getItem('ruolo') || new URLSearchParams(location.search).get('ruolo') || 'sala';
+    sessionStorage.setItem('ruolo', ruolo);
+    console.log('👤 Ruolo attivo:', ruolo);
+
+    // 2. Badge ambiente (DEV/STABILE)
+    // Badge/Classe ambiente gestiti da js/env.js
+
+    // 3. Sidebar: mostra ruolo
+    const spanRuolo = document.getElementById('ruolo-utente');
+    if (spanRuolo) spanRuolo.textContent = ruolo;
+
+    <!-- 4. Carica il menu dinamico e poi JS in ordine -->
+fetch(`partials/topnav_${ruolo}.html`)
+  .then(res => res.ok ? res.text() : Promise.reject(`Errore topnav: ${res.status}`))
+  .then(html => {
+    const placeholder = document.getElementById('top-menu-placeholder');
+    if (!placeholder) throw new Error('❌ Manca il placeholder del menu');
+    placeholder.innerHTML = html;
+    console.log('✅ Topnav caricato');
+
+    /* === TOPNAV OFFSET: allinea i contenuti all’altezza reale del menu === */
+    function applyTopnavOffset() {
+      // cerca la barra appena iniettata
+      const topnav =
+        placeholder.querySelector('.top-nav') ||
+        document.querySelector('.top-nav');
+
+      // fallback 55px (misura reale che mi hai indicato)
+      const h = topnav && topnav.offsetHeight ? topnav.offsetHeight : 55;
+
+      // setta la variabile CSS e attiva l’offset sui wrapper
+      document.documentElement.style.setProperty('--topnav-h', h + 'px');
+      document.body.classList.add('has-topnav');
+      // debug (rimuovi se non ti serve)
+      // console.log('[TOPNAV] altezza menu:', h);
+    }
+
+    // applica subito e al prossimo frame (dopo il render)
+    applyTopnavOffset();
+    requestAnimationFrame(applyTopnavOffset);
+
+    // ricalcola su resize e quando cambia la barra
+    window.addEventListener('resize', applyTopnavOffset);
+    if ('ResizeObserver' in window) {
+      const obsTarget = placeholder; // osserva il contenitore del menu
+      const ro = new ResizeObserver(applyTopnavOffset);
+      ro.observe(obsTarget);
+    }
+    /* === /TOPNAV OFFSET === */
+
+    // 5. Carica script JS in sequenza
+    const scripts = [
+      'js/toggle_manutenzione.js',
+      'js/vista_dinamica.js?v=10',
+      'js/ordinamento.js',
+      'js/menu.js?v=3'
+    ];
+
+    const caricaScript = (i = 0) => {
+      if (i >= scripts.length) return;
+      const script = document.createElement('script');
+      script.src = scripts[i];
+      script.onload = () => {
+        console.log('📦 Caricato:', scripts[i]);
+        caricaScript(i + 1);
+      };
+      document.body.appendChild(script);
+    };
+
+    caricaScript();
+  })
+  .catch(err => console.error('❌ Errore caricamento topnav o script:', err));
+  });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const resetBtn = document.getElementById('reset-filtri');
+  const form = document.getElementById('form-filtri');
+
+  if (resetBtn && form) {
+    resetBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      form.reset();
+
+      // forza Vista elenco su "In produzione"
+      const vistaElenco = document.getElementById('filtro-nome-vuoto');
+      if (vistaElenco) {
+        vistaElenco.value = 'pieni';
+      }
+
+      // recupera tutti i parametri già presenti
+      const params = new URLSearchParams(window.location.search);
+
+      // se ruolo non c’è, leggilo da sessionStorage
+      if (!params.get('ruolo')) {
+        const ruolo = sessionStorage.getItem('ruolo');
+        if (ruolo) params.set('ruolo', ruolo);
+      }
+
+      // aggiorna la URL senza ricaricare
+      window.history.replaceState({}, document.title, location.pathname + "?" + params.toString());
+
+      console.log('🔄 Filtri resettati mantenendo ruolo:', params.get('ruolo'));
+      console.log('✅ Vista elenco riportata su: In produzione');
+    });
+  }
+});
+</script>
+
+</body>
+</html>

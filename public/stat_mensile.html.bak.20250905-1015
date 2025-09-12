@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>== CLONE == Statistiche Mensili</title>
+  <link rel="stylesheet" href="/css/layout.css" />
+
+  <!-- ================== CSS SPECIFICO STATISTICHE (dal file originale) [INIZIO] ================== -->
+  <style>
+    /* [STAT_MENSILE] Stili pagina statistiche – manteniamo quelli già usati qui */
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f3f3f3;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }
+    h2 { text-align: center; color: #333; }
+    label, select, button { display: block; margin: 10px 0; font-size: 1rem; }
+    select, button {
+      padding: 8px 12px; font-size: 1rem; border-radius: 8px; border: 1px solid #ccc;
+      width: 100%; box-sizing: border-box;
+    }
+    button { background-color: #0f5d36; color: white; border: none; cursor: pointer; margin-top: 10px; }
+    button:hover { background-color: #0c4d2d; }
+
+    .output {
+      display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 30px; max-width: 100%;
+    }
+    .card {
+      flex: 1 1 300px; min-width: 280px; max-width: 320px; padding: 20px;
+      border-radius: 10px; color: white; font-size: 2em; font-weight: bold; text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1); box-sizing: border-box; margin: 5px;
+    }
+    .card.sverniciatura { background-color: #2e7d32; } /* Verde */
+    .card.altre { background-color: #1565c0; } /* Blu */
+    .card.small { font-size: 1.6em; }
+    .card small {
+      display: block; font-size: 0.5em; font-weight: normal; margin-top: 10px; color: rgba(255,255,255,0.8);
+    }
+    h3.titolo-sezione {
+      width: 100%; font-size: 1.5em; color: #222; margin: 40px 0 10px 0;
+      text-align: center; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .card.totale { background-color: #8e44ad; } /* Viola */
+    .gruppo-card-orizzontale {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-top: 40px;
+    }
+    .card-madre {
+      flex: 1 1 300px; max-width: 360px; padding: 20px; background-color: #ffffff;
+      border: 2px solid #ddd; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); box-sizing: border-box;
+    }
+    .card-madre .card { box-shadow: none; border: 1px solid rgba(255,255,255,0.4); }
+
+    /* === [SIDEBAR STAT_MENSILE] Allineamento stile con report_date_mancanti – INIZIO === */
+    .layout { display: flex; height: 100vh; overflow: hidden; }
+    .sidebar-filtri {
+      width: 280px; background-color: #fff; padding: 20px;
+      border-right: 1px solid #ccc; box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+      box-sizing: border-box;
+    }
+    .main-content { flex-grow: 1; padding: 30px; overflow-y: auto; display: flex; justify-content: center; }
+    .report-container { max-width: 1200px; width: 100%; }
+    /* === [SIDEBAR STAT_MENSILE] Allineamento stile con report_date_mancanti – FINE === */
+  </style>
+  <!-- ================== CSS SPECIFICO STATISTICHE [FINE] ================== -->
+</head>
+<body>
+  <!-- Placeholder menu top dinamico -->
+  <div id="top-menu-placeholder"></div>
+
+  <!-- Salvataggio ruolo da URL -->
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const ruoloFromUrl = params.get('ruolo');
+    if (ruoloFromUrl) sessionStorage.setItem('ruolo', ruoloFromUrl);
+  </script>
+
+  <!-- Overlay e badge manutenzione -->
+  <div id="overlay-manutenzione" style="
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: white; z-index: 99999; text-align: center; padding-top: 100px;">
+    <h1>🚧 Modalità Manutenzione</h1>
+    <p>Il sistema è temporaneamente non disponibile.</p>
+  </div>
+
+  <div id="env-badge" style="position: fixed; top: 10px; right: 10px; padding: 6px 12px; border-radius: 4px; font-weight: bold; z-index: 9999;"></div>
+
+  <div id="banner-manutenzione" style="
+    display: none; width: 100%; background-color: orange; color: black; font-weight: bold;
+    text-align: center; padding: 10px; cursor: pointer; z-index: 9998; position: fixed; top: 0; left: 0;">
+    ⚠️ MODALITÀ MANUTENZIONE ATTIVA
+  </div>
+
+  <!-- Layout uniforme come report_date_mancanti -->
+  <div class="layout">
+    <!-- Sidebar da parziale -->
+    <div id="sidebar-placeholder"></div>
+
+    <!-- Contenuto principale -->
+    <div class="main-content">
+      <div class="report-container">
+        <div class="container">
+          <h2>Statistiche mensili - Metri Quadri e Ore</h2>
+
+          <label for="mese">Mese:</label>
+          <select id="mese">
+            <option value="01">Gennaio</option>
+            <option value="02">Febbraio</option>
+            <option value="03">Marzo</option>
+            <option value="04">Aprile</option>
+            <option value="05">Maggio</option>
+            <option value="06">Giugno</option>
+            <option value="07" selected>Luglio</option>
+            <option value="08">Agosto</option>
+            <option value="09">Settembre</option>
+            <option value="10">Ottobre</option>
+            <option value="11">Novembre</option>
+            <option value="12">Dicembre</option>
+          </select>
+
+          <label for="anno">Anno:</label>
+          <select id="anno"></select>
+
+          <button id="calcola">Calcola</button>
+
+          <div id="risultato" class="output"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader Topnav dinamico + badge CLONE + toggle manutenzione -->
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const ruolo = sessionStorage.getItem('ruolo') || 'sala';
+
+      // 1) Topnav
+      try {
+        const topnavPath = `partials/topnav_${ruolo}.html`;
+        const r = await fetch(topnavPath, { cache: 'no-store' });
+        if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+        document.getElementById('top-menu-placeholder').innerHTML = await r.text();
+        document.body.classList.add('has-topnav');
+        console.log('✅ Topnav caricato da:', topnavPath);
+      } catch (err) {
+        console.error('❌ Errore caricamento topnav:', err);
+      }
+
+      // 2) Sidebar (identica a report_date_mancanti.html)
+      try {
+        const rs = await fetch('partials/sidebar_base.html', { cache: 'no-store' });
+        if (!rs.ok) throw new Error(`${rs.status} ${rs.statusText}`);
+        document.getElementById('sidebar-placeholder').innerHTML = await rs.text();
+        const span = document.getElementById('ruolo-utente');
+        if (span) span.textContent = ruolo;
+        console.log('✅ Sidebar caricata da: partials/sidebar_base.html');
+      } catch (err) {
+        console.error('❌ Errore caricamento sidebar:', err);
+      }
+
+      // 3) Badge ambiente (CLONE)
+      const envBadge = document.getElementById('env-badge');
+      if (envBadge) {
+        envBadge.textContent = 'CLONE';
+        envBadge.style.background = '#ffd54f';
+        envBadge.style.color = '#000';
+      }
+    });
+  </script>
+
+  <!-- Script globale manutenzione -->
+  <script src="js/toggle_manutenzione.js"></script>
+
+  <!-- Script STATISTICHE (anno + calcolo + render card) -->
+  <script>
+    // Popolamento dinamico anno (ultimi 5)
+    const annoSelect = document.getElementById('anno');
+    const annoCorrente = new Date().getFullYear();
+    for (let i = annoCorrente; i >= annoCorrente - 5; i--) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = i;
+      annoSelect.appendChild(opt);
+    }
+
+    // Handler bottone "Calcola"
+    document.getElementById('calcola').addEventListener('click', () => {
+      const mese = document.getElementById('mese').value;
+      const anno = document.getElementById('anno').value;
+
+      fetch(`/api/statistiche/mensili?mese=${mese}&anno=${anno}`)
+        .then(res => res.json())
+        .then(data => {
+          const risultato = document.getElementById('risultato');
+
+          const card = (valore, label, classe = '', isInteger = false) => `
+            <div class="card ${classe}">
+              ${isInteger ? parseInt(valore || 0, 10) : parseFloat(valore || 0).toFixed(2)}
+              <small>${label}</small>
+            </div>
+          `;
+
+          risultato.innerHTML = `
+            ${card(data.num_schede, 'Numero Schede', 'totale', true)}
+
+            <div class="gruppo-card-orizzontale">
+              <div class="card-madre">
+                <h3 class="titolo-sezione">Sverniciatura</h3>
+                ${card(data.pezzi_sverniciatura, 'N. Pezzi', 'sverniciatura', true)}
+                ${card(data.mq_sverniciatura, 'Metri quadri', 'sverniciatura')}
+                ${card(data.ore_sv_smontaggio, 'Ore Smontaggio', 'sverniciatura')}
+                ${card(data.ore_sv_produzione, 'Ore Produzione', 'sverniciatura')}
+              </div>
+
+              <div class="card-madre">
+                <h3 class="titolo-sezione">Falegnameria</h3>
+                ${card(data.pezzi_falegnameria, 'N. Pezzi', 'altre', true)}
+                ${card(data.mq_altre, 'Metri quadri', 'altre')}
+                ${card(data.ore_alt_falextra, 'Ore Falegn. Extra', 'altre')}
+                ${card(data.ore_alt_falrinf, 'Ore Falegn. Rinforzo', 'altre')}
+                ${card(data.ore_alt_fal, 'Tot Ore Falegnameria', 'altre')}
+              </div>
+
+              <div class="card-madre">
+                <h3 class="titolo-sezione">Altri dati</h3>
+                ${card(data.ore_alt_smontaggio, 'Ore Smontaggio', 'altre')}
+                ${card(data.ore_alt_prod, 'Ore Produzione', 'altre')}
+              </div>
+            </div>
+          `;
+        })
+        .catch(err => {
+          document.getElementById('risultato').textContent = 'Errore durante il calcolo delle statistiche.';
+          console.error(err);
+        });
+    });
+  </script>
+</body>
+</html>

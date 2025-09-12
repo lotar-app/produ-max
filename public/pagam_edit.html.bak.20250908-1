@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>== CLONE == Modifica Pagamento</title>
+  <link rel="stylesheet" href="css/layout.css" />
+</head>
+<body>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const ruolo = params.get("ruolo") || sessionStorage.getItem("ruolo") || "admin";
+    if (ruolo) sessionStorage.setItem("ruolo", ruolo);
+  </script>
+
+  <!-- Top menu dinamico -->
+  <div id="top-menu-placeholder"></div>
+
+  <!-- Badge CLONE -->
+  <div id="env-badge" style="position: fixed; top: 10px; right: 10px; padding: 6px 12px; border-radius: 4px; font-weight: bold; z-index: 9999;">CLONE</div>
+
+  <!-- Layout generale -->
+  <div class="layout-container">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar-filtri">
+      <div class="sidebar-header">
+        <img src="https://www.lotarpersiane.it/wp-content/uploads/2025/02/Logo-LOTAR-positivo-1.png" alt="Logo" class="logo-sidebar" />
+        <h3 class="titolo-sidebar">LO.TA.R.<br/>PRODU-MAX v.1.0</h3>
+        <p class="ruolo-sidebar">Ruolo: <span id="ruolo-utente"></span></p>
+      </div>
+    </aside>
+
+    <!-- Contenuto principale -->
+    <main class="contenuto-principale">
+      <div class="form-wrapper">
+        <h2>Modifica Pagamento</h2>
+        <form id="pagamForm">
+
+          <div class="readonly-field">
+            <label>Nome cliente</label>
+            <div id="nome" class="readonly-box"></div>
+          </div>
+
+          <div class="readonly-field">
+            <label>Tipo Cliente</label>
+            <div id="tipo_cliente_id" class="readonly-box"></div>
+          </div>
+
+          <div class="readonly-field">
+            <label>Tipo Lavorazione</label>
+            <div id="tipo_lavorazione_id" class="readonly-box"></div>
+          </div>
+
+          <div class="readonly-field">
+            <label>Tipo Linea</label>
+            <div id="tipo_linea_id" class="readonly-box"></div>
+          </div>
+
+          <label>
+            <input type="checkbox" id="pagamento" name="pagamento" />
+            Pagamento effettuato
+          </label>
+
+          <div id="flagConsegnaWrapper">
+            <label>
+              <input type="checkbox" id="flagConsegna" name="flagConsegna" />
+              Consegnato oggi
+            </label>
+          </div>
+
+          <div id="consegnaInfo" class="info-message" style="display: none; margin-top: 8px; font-size: 0.9em; color: #555;">
+            È già stata inserita una data di consegna per questa lavorazione. <br> Per modifiche alla data chiedere a Jonathan o a Max.
+          </div>
+
+          <input type="hidden" id="id" name="id" />
+          <input type="hidden" id="consegna" name="consegna" />
+
+          <button type="submit">Salva</button>
+        </form>
+
+        <div id="successMessage" class="success-message" style="display: none;"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Script -->
+  <script>
+    const id = params.get("id");
+    if (!id) {
+      alert("ID mancante");
+      window.location.href = `vista_dinamica.html?ruolo=${ruolo}`;
+    }
+    document.getElementById("ruolo-utente").textContent = ruolo;
+
+    // Caricamento topnav da file statico
+    fetch(`partials/topnav_${ruolo}.html`)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("top-menu-placeholder").innerHTML = html;
+      })
+      .catch(err => console.error("Errore nel caricamento del menu:", err));
+  </script>
+  <script src="js/pagam_edit.js"></script>
+</body>
+</html>
