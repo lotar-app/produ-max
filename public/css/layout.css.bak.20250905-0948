@@ -1,0 +1,909 @@
+/* layout.css */
+
+/* === RESET BASE === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* === STILE GENERALE DEL BODY === */
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+/* === MENU TOP (menu-container e toggle) === */
+#menu-container {
+  width: 220px;
+  background-color: #f4f4f4;
+  border-right: 1px solid #ccc;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+#menu-container.hidden {
+  display: none;
+}
+
+#toggle-menu {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 4px;
+  z-index: 10;
+}
+
+#toggle-menu:hover {
+  background-color: #0056b3;
+}
+
+/* === SEZIONE CONTENUTI PRINCIPALI === */
+main {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+/* === TABELLE === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #fff;
+}
+
+th, td {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+/* === STILE DEI FORM === */
+form {
+  display: grid;
+  gap: 12px;
+  max-width: 600px;
+  position: relative;
+}
+
+input, select, textarea, button {
+  font-size: 1rem;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+
+/* === CAMPO NOME CON MAIUSCOLA === */
+input#nome {
+  text-transform: capitalize;
+  width: 100%;
+}
+
+/* === AUTOCOMPLETE SUGGERIMENTI === */
+.autocomplete-box {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  z-index: 999;
+}
+
+.autocomplete-box .suggestion-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.autocomplete-box .suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
+.autocomplete-box .highlight {
+  font-weight: bold;
+  background-color: yellow;
+}
+
+/* === MENU LINKS === */
+#menu-container nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#menu-container nav a {
+  display: block;
+  text-decoration: none;
+  color: #333;
+  padding: 10px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  font-weight: 500;
+}
+
+#menu-container nav a:hover {
+  background-color: #e0e0e0;
+  color: #007bff;
+}
+
+#menu-container nav a.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+#menu-container nav a i {
+  margin-right: 8px;
+}
+
+/* === BOTTONI AZIONE (tabella) === */
+a.btn {
+  background-color: #0056b3;
+  color: white;
+  padding: 4px 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+a.btn:hover {
+  background-color: #003f7f;
+}
+
+button.btn {
+  background-color: #e74c3c; /* rosso */
+  color: white;
+  padding: 4px 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-weight: normal;
+  border: none;
+  cursor: pointer;
+}
+
+button.btn:hover {
+  background-color: #c0392b; /* rosso scuro */
+}
+
+/* === STILE FORM SALA_EDIT - INIZIO === */
+.form-wrapper {
+  max-width: 600px;
+  width: 100%;
+  background-color: #f9f9f9;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form > div {
+  margin-bottom: 15px;
+}
+
+form > div > strong {
+  display: inline-block;
+  width: 160px;
+  font-weight: 600;
+  color: #333;
+}
+
+form span {
+  color: #444;
+}
+
+form input[type="checkbox"] {
+  transform: scale(1.2);
+  margin-left: 5px;
+}
+
+button[type="submit"] {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #004494;
+}
+/* === STILE FORM SALA_EDIT - FINE === */
+
+/* === BOTTONE ANNULLA - INIZIO === */
+#annullaBtn {
+  margin-left: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #ccc;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+#annullaBtn:hover {
+  background-color: #bbb;
+}
+/* === BOTTONE ANNULLA - FINE === */
+
+/* === FORM GENERICO (form.html) - INIZIO === */
+.form-wrapper form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-wrapper form > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-wrapper label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.form-wrapper input,
+.form-wrapper select,
+.form-wrapper textarea {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.form-wrapper button[type="submit"] {
+  align-self: flex-start;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.form-wrapper button[type="submit"]:hover {
+  background-color: #004494;
+}
+/* === FORM GENERICO (form.html) - FINE === */
+
+/* === VISTA (vista.html) - INIZIO === */
+.vista-main {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 30px;
+}
+
+.vista-header h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  white-space: nowrap;
+}
+/* === VISTA (vista.html) - FINE === */
+
+/* === CAMPI RAL AFFIANCATI (form.html) - INIZIO === */
+#sezione_ral {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+#sezione_ral > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#sezione_ral label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+#sezione_ral input {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+/* === CAMPI RAL AFFIANCATI (form.html) - FINE === */
+
+/* === SPAZIO PER EVITARE SOVRAPPOSIZIONE CON TOGGLE MENU - INIZIO === */
+#menu-container nav {
+  margin-top: 60px; /* Evita sovrapposizione col pulsante toggle */
+}
+/* === SPAZIO PER EVITARE SOVRAPPOSIZIONE CON TOGGLE MENU - FINE === */
+
+/* === COLORAZIONE PALLINI COLONNE COLORATE - INIZIO === */
+.pallino {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+.rosso {
+  background-color: red;
+}
+
+.azzurro {
+  background-color: #00c0ff;
+}
+
+.verde {
+  background-color: green;
+}
+
+.nero {
+  background-color: black;
+}
+
+.fucsia {
+  background-color: fuchsia;
+}
+
+/* === COLORAZIONE PALLINI COLONNE COLORATE - FINE === */
+
+/* ✅ Visualizzazione testo statico nei form */
+.dati-statici {
+  background-color: #f9f9f9;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-height: 30px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* ✅ Visualizzazione coerente dei campi in sola lettura nei form */
+form p {
+  padding: 0.4em;
+  background-color: #f4f4f4;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 1em;
+  font-size: 1em;
+  color: #333;
+}
+
+.readonly-field {
+  margin-bottom: 10px;
+}
+
+.readonly-box {
+  background-color: #f4f4f4;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* === Stili per vista.html === */
+table {
+  font-size: 0.85rem;
+}
+
+th, td {
+  padding: 4px 6px;
+}
+
+.btn {
+  font-size: 0.8rem;
+  margin-right: 4px;
+}
+/* === Fine vista.html === */
+
+/* 👇 Impedisce l'andare a capo nella colonna Azioni */
+th.nowrap, td.nowrap {
+  white-space: nowrap;
+}
+
+.suggestion-item.active {
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+
+/* === FILTRI VISTA === */
+.filtro-container {
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+.titolo-filtri {
+  font-size: 13px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+
+.filtro-riga {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  margin-bottom: 8px;
+}
+
+
+.filtro-blocco {
+  display: flex;
+  flex-direction: column;
+  min-width: 110px;
+  max-width: 140px;
+}
+
+.filtro-blocco input,
+.filtro-blocco select,
+.filtro-checkbox label {
+   padding: 3px 6px;
+  font-size: 12px;
+  height: 26px;
+  border-radius: 3px;
+}
+
+
+.filtro-blocco label {
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.filtro-checkbox {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  gap: 4px;
+  margin-right: 10px;
+}
+
+
+#reset-filtri {
+  padding: 6px 12px;
+  border: 1px solid #3783bd;
+  background-color: #3783bd;
+  cursor: pointer;
+}
+
+/* Evidenziazione riga al passaggio del mouse */
+tbody tr:hover {
+  background-color: #e0f7fa !important; /* Azzurro chiaro */
+  cursor: pointer;
+}
+
+/*personalizziamo il blocco filtri*/
+/* Rende i campi filtro più compatti */
+.filtro-panel input,
+.filtro-panel select {
+  font-size: 0.85rem;
+  padding: 2px 4px;
+}
+
+/* Se usi <label> per i filtri */
+.filtro-panel label {
+  font-size: 0.9rem;
+  margin-right: 8px;
+}
+
+/* Riduce margini intorno ai campi */
+.filtro-panel .filtro-item {
+  margin-bottom: 4px;
+}
+
+.filtro-riga.multipla {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 15px;
+  align-items: flex-end;
+}
+
+.filtro-blocco.compatto,
+.filtro-checkbox.compatto {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  min-width: 130px;
+}
+
+.filtro-blocco.compatto input,
+.filtro-blocco.compatto select,
+.filtro-checkbox.compatto input {
+  font-size: 0.85rem;
+  padding: 2px 6px;
+}
+
+.filtro-checkbox.compatto label {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+
+/* Menu laterale visibile */
+.menu-superiore {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 160px; /* RIDOTTA */
+  height: 100vh;
+  background-color: #f4f4f4;
+  padding: 10px;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+
+.vista-main {
+  margin-left: 160px; /* stessa larghezza del menu */
+  padding: 20px;
+}
+
+.conteggio-records {
+  margin-top: 20px;
+}
+
+.livello_dati {
+  font-size: 18px;
+  font-weight: 600;
+  color: coral;
+  margin-top: 10px;
+}
+
+/* === PULSANTE ARCHIVIA === */
+.btn-archivia {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-archivia:hover {
+  background-color: #c0392b;
+}
+
+
+.vista-verde {
+  color: #27ae60;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.btn.rosso {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+.btn.rosso:hover {
+  background-color: #c0392b;
+}
+
+
+/* 🚫 Icona divieto per stato "Fermo" (standby) */
+.fermo-icon::before {
+  content: '🚫';
+  font-size: 16px;
+  display: inline-block;
+}
+
+
+/* === Asterisco campi obbligatori === */
+.required-asterisk {
+  color: red;
+  margin-left: 2px;
+}
+/* === Fine Asterisco campi obbligatori === */
+
+/* === Banner visivo versione CLONE === */
+#banner-clone {
+  background-color: #b10000;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  font-size: 1.2rem;
+  border-bottom: 3px solid #750000;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+}
+/* === Fine banner CLONE === */
+
+
+/* Container principale a due colonne */
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+
+/* === layout.css aggiornato per nuovo layout a due colonne === */
+
+/* Contenitore generale a due colonne */
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+}
+
+/* === Sidebar sinistra: logo, utente, filtri === */
+.sidebar-filtri {
+  /*width: 300px;
+  min-width: 300px;
+  max-width: 300px; */
+  flex-shrink: 0;
+  flex-grow: 0;
+  background-color: #fff;
+  padding: 20px;
+  border-right: 1px solid #ccc;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  overflow-y: auto; /* Se vuoi puoi provare anche overlay qui */
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Intestazione della sidebar */
+.sidebar-filtri header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sidebar-filtri header img {
+  max-width: 80px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.sidebar-filtri header h1 {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.sidebar-filtri header p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+
+
+
+
+
+
+.filtro-blocco label,
+.filtro-checkbox label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+}
+
+
+
+
+
+#reset-filtri {
+  margin-top: 15px;
+  padding: 6px 10px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#reset-filtri:hover {
+  background-color: #2980b9;
+}
+
+/* Contenuto principale */
+.contenuto-principale {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-x: auto;
+  box-sizing: border-box;
+}
+
+/* Tabella scrollabile con intestazione fissa */
+.tabella-scroll-wrapper {
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+}
+
+.tabella-scroll-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 2;
+  border-bottom: 2px solid #ccc;
+  text-align: left;
+  padding: 8px;
+}
+
+.tabella-scroll-wrapper tbody td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Banner ambiente */
+#env-badge {
+  font-family: sans-serif;
+  font-size: 0.9rem;
+  border-radius: 4px;
+}
+
+/* === Sidebar: Logo + Titolo + Ruolo === */
+.sidebar-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo-sidebar {
+  width: 180px;
+  height: auto;
+  margin: 1rem auto;
+  display: block;
+}
+
+.titolo-sidebar {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.ruolo-sidebar {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+/* === MENU ORIZZONTALE === */
+.top-nav {
+  background-color: #0f5d36;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: center;     /* centratura orizzontale */
+  align-items: center;         /* centratura verticale */
+  z-index: 1000;
+}
+
+.menu-livello1 {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-item {
+  position: relative;
+  margin-right: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.menu-item > a {
+  padding: 10px 15px;
+  display: inline-block;
+  color: white;
+  text-decoration: none;
+  line-height: 1;
+}
+
+.menu-item:hover {
+  background-color: #444;
+  border-radius: 4px;
+}
+
+/* === SOTTOMENU === */
+.submenu {
+  display: none;
+  position: absolute;
+  background-color: #137f50;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  top: 100%;
+  left: 0;
+  z-index: 999;
+  min-width: 200px;
+}
+
+.submenu li a {
+  display: block;
+  padding: 10px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.submenu li a:hover {
+  background-color: #1a9765;
+}
+
+.menu-item:hover .submenu {
+  display: block;
+}
+
+.top-nav {
+  position: relative;
+  z-index: 1000;
+}
+
+/* === [TOPNAV FIXED] Mantieni il menu in alto durante lo scroll – INIZIO === */
+:root {
+  --topnav-h: 60px; /* altezza stimata della barra; regola se serve */
+}
+
+/* La barra orizzontale resta sempre visibile */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2000; /* sopra ai contenuti */
+}
+
+/* Quando la top-nav è fissa, al body serve spazio in alto per non coprire il contenuto */
+body.has-topnav {
+  padding-top: var(--topnav-h);
+}
+
+/* Mantieni il badge sopra il menu */
+#env-badge {
+  z-index: 2001;
+}
+
+/* Se qualche pagina usava position: sticky sulla top-nav, neutralizziamo: */
+.top-nav.sticky {
+  position: fixed;
+}
+/* === [TOPNAV FIXED] Mantieni il menu in alto durante lo scroll – FINE === */
