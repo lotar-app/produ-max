@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Titolo della Pagina</title>
+  <link rel="stylesheet" href="css/layout.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+    }
+
+    #menu-container {
+      width: 220px;
+      background-color: #f4f4f4;
+      border-right: 1px solid #ccc;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    #menu-container.hidden {
+      display: none;
+    }
+
+    #toggle-menu {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    main {
+      flex-grow: 1;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="toggle-menu">☰ Menu</button>
+  <div id="menu-container"></div>
+
+  <main>
+    <h2>Contenuto della Pagina</h2>
+    <!-- Inserisci qui i contenuti personalizzati -->
+  </main>
+
+  <!-- Layout comune: menu dinamico -->
+  <script type="module">
+    import { initLayout } from './js/layout.js';
+    initLayout();
+  </script>
+
+  <!-- Altri script specifici della pagina -->
+  <!-- <script src="js/pagina-specifica.js"></script> -->
+
+</body>
+</html>
