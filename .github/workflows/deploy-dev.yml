@@ -1,47 +1,8 @@
 name: Deploy Dev
 on:
-push:
-branches: [develop]
 workflow_dispatch:
 jobs:
 deploy:
 runs-on: ubuntu-latest
-environment:
-name: sviluppo
 steps:
-- name: Checkout
-uses: actions/checkout@v4
-- name: Setup SSH
-shell: bash
-run: |
-mkdir -p ~/.ssh
-printf '%s' "${{ secrets.DEV_SSH_KEY }}" > ~/.ssh/id_ed25519
-chmod 600 ~/.ssh/id_ed25519
-ssh-keyscan -H "${{ secrets.DEV_SSH_HOST }}" >> ~/.ssh/known_hosts
-- name: Rsync files to server
-shell: bash
-env:
-HOST: ${{ secrets.DEV_SSH_HOST }}
-USER: ${{ secrets.DEV_SSH_USER }}
-DEST: ${{ secrets.DEV_PATH }}
-run: |
-rsync -az --delete
---exclude='.git/'
---exclude='.github/'
---exclude='node_modules/'
--e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes"
-./ "$USER@$HOST:$DEST/"
-- name: Optional remote post-deploy
-shell: bash
-env:
-HOST: ${{ secrets.DEV_SSH_HOST }}
-USER: ${{ secrets.DEV_SSH_USER }}
-DEST: ${{ secrets.DEV_PATH }}
-run: |
-ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes "$USER@$HOST" bash -lc '
-set -e
-cd "$DEST"
-if [ -x scripts/post_deploy_dev.sh ]; then
-scripts/post_deploy_dev.sh || true
-fi
-'
+- run: echo "yaml ok"
