@@ -35,6 +35,7 @@
     --filter='protect backup_*' \
     --filter='protect dump_*' \
     --filter='protect export_*' \
+    --filter='protect /mysql' \
     --filter='protect /mysql/' \
     --filter='protect /snap/' \
     --filter='protect **/.DS_Store' \
