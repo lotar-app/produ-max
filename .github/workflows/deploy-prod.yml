@@ -18,7 +18,7 @@
 {
 "name": "Rsync to PROD (dry-run)",
 "env": { "HOST": "${{ secrets.PROD_SSH_HOST }}", "USER": "${{ secrets.PROD_SSH_USER }}", "DEST": "${{ secrets.PROD_PATH }}" },
-"run": "rsync -azn -vv --itemize-changes --stats --delete --exclude='.git/' --exclude='.github/' --exclude='node_modules/' --filter='protect .env' --filter='protect *.sql' --filter='protect .zip' --filter='protect .tar' --filter='protect .gz' --filter='protect backup_' --filter='protect dump_' --filter='protect export_' --filter='protect mysql' --filter='protect mysql/' --filter='protect snap' --filter='protect snap/' --filter='protect **/.DS_Store' -e \"ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes\" ./ \"$USER@$HOST:$DEST/\""
+"run": "rsync -azn -vv --itemize-changes --stats --delete --exclude='.git/' --exclude='.github/' --exclude='node_modules/' --filter='protect .env' --filter='protect *.sql' --filter='protect *.zip' --filter='protect *.tar' --filter='protect *.gz' --filter='protect backup_*' --filter='protect dump_*' --filter='protect export_*' --filter='protect mysql' --filter='protect mysql/' --filter='protect snap' --filter='protect snap/' --filter='protect **/.DS_Store' -e \"ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes\" ./ \"$USER@$HOST:$DEST/\""
 }
 ]
 }
