@@ -14,6 +14,15 @@
 {
 "name": "Test SSH",
 "run": "ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519 "${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}" 'echo ok && whoami && hostname'"
+},
+{
+"name": "Rsync to PROD (dry-run)",
+"env": {
+"HOST": "${{ secrets.PROD_SSH_HOST }}",
+"USER": "${{ secrets.PROD_SSH_USER }}",
+"DEST": "${{ secrets.PROD_PATH }}"
+},
+"run": "rsync -azn --delete --exclude='.git/' --exclude='.github/' --exclude='node_modules/' -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" ./ "$USER@$HOST:$DEST/""
 }
 ]
 }
