@@ -22,7 +22,13 @@
 "USER": "${{ secrets.PROD_SSH_USER }}",
 "DEST": "${{ secrets.PROD_PATH }}"
 },
-"run": "rsync -azn -vv --itemize-changes --stats --delete --exclude='.git/' --exclude='.github/' --exclude='node_modules/' -e \"ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes\" ./ \"$USER@$HOST:$DEST/\""
+"run": "rsync -azn -vv --itemize-changes --stats --delete
+--exclude='.git/' --exclude='.github/' --exclude='node_modules/'
+--exclude='.env' --exclude='.sql' --exclude='.zip' --exclude='.tar' --exclude='.gz'
+--exclude='backup_' --exclude='dump_' --exclude='export_'
+--exclude='mysql' --exclude='snap' --exclude='.DS_Store'
+-e \"ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes\"
+./ \"$USER@$HOST:$DEST/\""
 }
 ]
 }
