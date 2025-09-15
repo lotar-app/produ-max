@@ -14,6 +14,15 @@
 {
 "name": "Test SSH",
 "run": "ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519 "${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_HOST }}" 'echo ok && whoami && hostname'"
+},
+{
+"name": "Rsync to DEV",
+"env": {
+"HOST": "${{ secrets.DEV_SSH_HOST }}",
+"USER": "${{ secrets.DEV_SSH_USER }}",
+"DEST": "${{ secrets.DEV_PATH }}"
+},
+"run": "rsync -az --delete --exclude='.git/' --exclude='.github/' --exclude='node_modules/' -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" ./ "$USER@$HOST:$DEST/""
 }
 ]
 }
