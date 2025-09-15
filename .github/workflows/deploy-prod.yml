@@ -1,0 +1,14 @@
+{
+"name": "Deploy Prod",
+"on": { "workflow_dispatch": {}, "push": { "branches": ["main"] } },
+"jobs": {
+"deploy": {
+"runs-on": "ubuntu-latest",
+"environment": "stabile",
+"steps": [
+{ "name": "Checkout", "uses": "actions/checkout@v4" },
+{ "name": "Ping", "run": "echo deploy-prod skeleton ok" }
+]
+}
+}
+}
