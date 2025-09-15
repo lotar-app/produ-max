@@ -1,0 +1,41 @@
+{
+"name": "Deploy Dev",
+"on": { "workflow_dispatch": {}, "push": { "branches": ["develop"] } },
+"jobs": {
+"deploy": {
+"runs-on": "ubuntu-latest",
+"environment": "sviluppo",
+"steps": [
+{ "name": "Checkout", "uses": "actions/checkout@v4" },
+{
+"name": "Setup SSH",
+"run": "mkdir -p ~/.ssh && printf '%s' "${{ secrets.DEV_SSH_KEY }}" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519 && ssh-keyscan -H "${{ secrets.DEV_SSH_HOST }}" >> ~/.ssh/known_hosts"
+},
+{
+"name": "Test SSH",
+"run": "ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519 "${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_HOST }}" 'echo ok && whoami && hostname'"
+},
+{
+"name": "Rsync to DEV",
+"env": {
+"HOST": "${{ secrets.DEV_SSH_HOST }}",
+"USER": "${{ secrets.DEV_SSH_USER }}",
+"DEST": "${{ secrets.DEV_PATH }}"
+},
+"run": "rsync -az --delete --exclude='.git/' --exclude='.github/' --exclude='node_modules/' -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" ./ "$USER@$HOST:$DEST/""
+},
+{
+"name": "Post-deploy (pm2 reload/start)",
+"env": {
+"HOST": "${{ secrets.DEV_SSH_HOST }}",
+"USER": "${{ secrets.DEV_SSH_USER }}",
+"DEST": "${{ secrets.DEV_PATH }}",
+"APP_NAME": "produ-dev",
+"NODE_ENV": "development"
+},
+"run": "ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519 "$USER@$HOST" "bash -lc 'cd \"$DEST\" && chmod +x scripts/post_deploy_dev.sh && APP_NAME=\"$APP_NAME\" NODE_ENV=\"$NODE_ENV\" ./scripts/post_deploy_dev.sh'""
+}
+]
+}
+}
+}

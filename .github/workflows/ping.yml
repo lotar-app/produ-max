@@ -1,0 +1,13 @@
+{
+"name": "Ping",
+"on": {
+"workflow_dispatch": {},
+"push": { "branches": ["develop"] }
+},
+"jobs": {
+"ping": {
+"runs-on": "ubuntu-latest",
+"steps": [ { "run": "echo ok" } ]
+}
+}
+}
