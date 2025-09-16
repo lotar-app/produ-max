@@ -24,6 +24,11 @@
   },
   "run": "rsync -az -vv --itemize-changes --stats --delete --exclude='.git/' --exclude='.github/' --exclude='node_modules/' --filter='protect .env' --filter='protect *.sql' --filter='protect *.zip' --filter='protect *.tar' --filter='protect *.gz' --filter='protect backup_*' --filter='protect dump_*' --filter='protect export_*' --filter='protect mysql' --filter='protect mysql/' --filter='protect snap' --filter='protect snap/' --filter='protect **/.DS_Store' --backup --backup-dir=\"$DEST/.rsync-backup-${GITHUB_RUN_ID}\" -e \"ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes\" ./ \"$USER@$HOST:$DEST/\""
 }
+{
+"name": "Post-deploy (pm2 reload/start)",
+"env": { "HOST": "${{ secrets.PROD_SSH_HOST }}", "USER": "${{ secrets.PROD_SSH_USER }}", "DEST": "${{ secrets.PROD_PATH }}", "APP_NAME": "produ-prod", "NODE_ENV": "production" },
+"run": "ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519 \"$USER@$HOST\" \"bash -lc 'cd \\\"$DEST\\\" && chmod +x scripts/post_deploy_prod.sh && APP_NAME=\\\"$APP_NAME\\\" NODE_ENV=\\\"$NODE_ENV\\\" ./scripts/post_deploy_prod.sh'\""
+}
 ]
 }
 
