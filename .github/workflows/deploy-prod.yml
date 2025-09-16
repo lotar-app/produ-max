@@ -19,6 +19,19 @@
           "run": "ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519 \"${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}\" 'echo ok && whoami && hostname'"
         },
         {
+          "name": "Rsync to PROD (dry-run, safety check)",
+          "env": {
+            "HOST": "${{ secrets.PROD_SSH_HOST }}",
+            "USER": "${{ secrets.PROD_SSH_USER }}",
+            "DEST": "${{ secrets.PROD_PATH }}"
+          },
+          "run": "set -o pipefail; rsync -azn -vv --itemize-changes --stats --delete --exclude='.git/' --exclude='.github/' --exclude='node_modules/' --filter='protect .env' --filter='protect *.sql' --filter='protect *.zip' --filter='protect *.tar' --filter='protect *.gz' --filter='protect backup_*' --filter='protect dump_*' --filter='protect export_*' --filter='protect mysql' --filter='protect mysql/' --filter='protect snap' --filter='protect snap/' --filter='protect **/.DS_Store' -e \"ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes\" ./ \"$USER@$HOST:$DEST/\" | tee rsync_dryrun.txt"
+        },
+        {
+          "name": "Fail if deletions detected",
+          "run": "if grep -E '^\\*deleting ' rsync_dryrun.txt; then echo '❌ Deletions rilevati nel dry-run. Correggi filtri/protezioni rsync prima di procedere.'; exit 1; else echo '✅ Nessuna deletion nel dry-run: si procede al deploy reale.'; fi"
+        },
+        {
           "name": "Rsync to PROD (real, with backup)",
           "env": {
             "HOST": "${{ secrets.PROD_SSH_HOST }}",
