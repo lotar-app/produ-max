@@ -28,8 +28,8 @@
           "run": "set -o pipefail; rsync -azn -vv --itemize-changes --stats --delete --exclude='.git/' --exclude='.github/' --exclude='node_modules/' --filter='protect .env' --filter='protect *.sql' --filter='protect *.zip' --filter='protect *.tar' --filter='protect *.gz' --filter='protect backup_*' --filter='protect dump_*' --filter='protect export_*' --filter='protect mysql' --filter='protect mysql/' --filter='protect snap' --filter='protect snap/' --filter='protect **/.DS_Store' -e \"ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes\" ./ \"$USER@$HOST:$DEST/\" | tee rsync_dryrun.txt"
         },
         {
-          "name": "Fail if deletions detected",
-          "run": "if grep -E '^\\*deleting ' rsync_dryrun.txt; then echo '❌ Deletions rilevati nel dry-run. Correggi filtri/protezioni rsync prima di procedere.'; exit 1; else echo '✅ Nessuna deletion nel dry-run: si procede al deploy reale.'; fi"
+          "name": "Warn if deletions detected",
+          "run": "if grep -E '^\\*deleting ' rsync_dryrun.txt; then echo '⚠️ Deletions presenti sul server (non verranno rimosse: --delete disabilitato).'; else echo '✅ Nessuna deletion nel dry-run.'; fi"
         },
         {
           "name": "Rsync to PROD (real, with backup)",
@@ -38,7 +38,7 @@
             "USER": "${{ secrets.PROD_SSH_USER }}",
             "DEST": "${{ secrets.PROD_PATH }}"
           },
-          "run": "rsync -az -vv --itemize-changes --stats --delete --exclude='.git/' --exclude='.github/' --exclude='node_modules/' --filter='protect .env' --filter='protect *.sql' --filter='protect *.zip' --filter='protect *.tar' --filter='protect *.gz' --filter='protect backup_*' --filter='protect dump_*' --filter='protect export_*' --filter='protect mysql' --filter='protect mysql/' --filter='protect snap' --filter='protect snap/' --filter='protect **/.DS_Store' --backup --backup-dir=\"$DEST/.rsync-backup-${GITHUB_RUN_ID}\" -e \"ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes\" ./ \"$USER@$HOST:$DEST/\""
+          "run": "rsync -az -vv --itemize-changes --stats --exclude='.git/' --exclude='.github/' --exclude='node_modules/' --filter='protect .env' --filter='protect *.sql' --filter='protect *.zip' --filter='protect *.tar' --filter='protect *.gz' --filter='protect backup_*' --filter='protect dump_*' --filter='protect export_*' --filter='protect mysql' --filter='protect mysql/' --filter='protect snap' --filter='protect snap/' --filter='protect **/.DS_Store' --backup --backup-dir=\"$DEST/.rsync-backup-${GITHUB_RUN_ID}\" -e \"ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes\" ./ \"$USER@$HOST:$DEST/\""
         },
         {
           "name": "Post-deploy (pm2 reload/start)",
