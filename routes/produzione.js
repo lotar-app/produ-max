@@ -609,9 +609,6 @@ router.get('/statistiche/mensili', (req, res) => {
       IFNULL(SUM(CASE WHEN tipo_linea_id = 4 THEN ore_produzione ELSE 0 END), 0) AS ore_sv_produzione,
 
       IFNULL(SUM(CASE WHEN tipo_linea_id != 4 THEN ore_smontaggio ELSE 0 END), 0) AS ore_alt_smontaggio,
-      IFNULL(SUM(CASE WHEN tipo_linea_id != 4 THEN ore_falegn_extra ELSE 0 END), 0) AS ore_alt_falextra,
-      IFNULL(SUM(CASE WHEN tipo_linea_id != 4 THEN ore_falegn_rinforzo ELSE 0 END), 0) AS ore_alt_falrinf,
-      IFNULL(SUM(CASE WHEN tipo_linea_id != 4 THEN ore_falegnameria ELSE 0 END), 0) AS ore_alt_fal,
       IFNULL(SUM(CASE WHEN tipo_linea_id != 4 THEN ore_produzione ELSE 0 END), 0) AS ore_alt_prod
     FROM produzione
     WHERE finito_admin IS NOT NULL
@@ -626,17 +623,21 @@ router.get('/statistiche/mensili', (req, res) => {
       AND finito_admin BETWEEN ? AND ?
   `;
 
-  const queryPezziFalegnameria = `
-    SELECT IFNULL(SUM(pezzi), 0) AS pezzi_falegnameria
+  const queryFalegnameriaAggregati = `
+    SELECT
+      IFNULL(SUM(pezzi), 0) AS pezzi_falegnameria,
+      IFNULL(SUM(ore_falegn_extra), 0) AS ore_alt_falextra,
+      IFNULL(SUM(ore_falegn_rinforzo), 0) AS ore_alt_falrinf,
+      IFNULL(SUM(ore_falegnameria), 0) AS ore_alt_fal
     FROM produzione
     WHERE tipo_linea_id != 4
-      AND finito_admin IS NOT NULL
+      AND falegnameria IS NOT NULL
+      AND falegnameria BETWEEN ? AND ?
       AND (
         ore_falegnameria > 0 OR
         ore_falegn_extra > 0 OR
         ore_falegn_rinforzo > 0
       )
-      AND finito_admin BETWEEN ? AND ?
   `;
 
   db.query(queryPrincipale, [inizioMese, fineMese], (err, results) => {
@@ -645,7 +646,13 @@ router.get('/statistiche/mensili', (req, res) => {
       return res.status(500).json({ errore: 'Errore nel calcolo delle statistiche' });
     }
 
-    const output = results[0];
+    const output = {
+      ...results[0],
+      ore_alt_falextra: 0,
+      ore_alt_falrinf: 0,
+      ore_alt_fal: 0,
+      pezzi_falegnameria: 0,
+    };
 
     db.query(queryPezziSverniciatura, [inizioMese, fineMese], (err2, res2) => {
       if (err2) {
@@ -655,13 +662,18 @@ router.get('/statistiche/mensili', (req, res) => {
 
       output.pezzi_sverniciatura = res2[0].pezzi_sverniciatura;
 
-      db.query(queryPezziFalegnameria, [inizioMese, fineMese], (err3, res3) => {
+      db.query(queryFalegnameriaAggregati, [inizioMese, fineMese], (err3, res3) => {
         if (err3) {
-          console.error('❌ Errore pezzi_falegnameria:', err3);
-          return res.status(500).json({ errore: 'Errore nel calcolo dei pezzi falegnameria' });
+          console.error('❌ Errore aggregati falegnameria:', err3);
+          return res.status(500).json({ errore: 'Errore nel calcolo dei dati falegnameria' });
         }
 
-        output.pezzi_falegnameria = res3[0].pezzi_falegnameria;
+        if (res3 && res3[0]) {
+          output.pezzi_falegnameria = res3[0].pezzi_falegnameria;
+          output.ore_alt_falextra = res3[0].ore_alt_falextra;
+          output.ore_alt_falrinf = res3[0].ore_alt_falrinf;
+          output.ore_alt_fal = res3[0].ore_alt_fal;
+        }
 
         console.log('📦 Output finale:', output);
         res.json(output);

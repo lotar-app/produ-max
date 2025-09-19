@@ -59,6 +59,10 @@
       border: 2px solid #ddd; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); box-sizing: border-box;
     }
     .card-madre .card { box-shadow: none; border: 1px solid rgba(255,255,255,0.4); }
+    .legend-info {
+      margin-top: 20px; font-size: 0.95rem; color: #4a4a4a; line-height: 1.4;
+    }
+    .legend-info strong { display: block; margin-bottom: 6px; color: #222; }
 
     /* === [SIDEBAR STAT_MENSILE] Allineamento stile con report_date_mancanti – INIZIO === */
     .layout { display: flex; height: 100vh; overflow: hidden; }
@@ -133,6 +137,12 @@
           <select id="anno"></select>
 
           <button id="calcola">Calcola</button>
+
+          <div id="legend-info" class="legend-info" role="note">
+            <strong>Legenda filtri</strong>
+            Sverniciatura e Produzione considerano le schede chiuse nel periodo (data <code>finito_admin</code>).
+            La Falegnameria invece considera le schede lavorate nel periodo (data <code>falegnameria</code>).
+          </div>
 
           <div id="risultato" class="output"></div>
         </div>
@@ -273,7 +283,7 @@ try {
               </div>
 
               <div class="card-madre">
-                <h3 class="titolo-sezione">Altri dati</h3>
+                <h3 class="titolo-sezione">Produzione</h3>
                 ${card(data.ore_alt_smontaggio, 'Ore Smontaggio', 'altre')}
                 ${card(data.ore_alt_prod, 'Ore Produzione', 'altre')}
               </div>
