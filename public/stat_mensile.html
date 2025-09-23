@@ -276,7 +276,7 @@ try {
               <div class="card-madre">
                 <h3 class="titolo-sezione">Falegnameria</h3>
                 ${card(data.pezzi_falegnameria, 'N. Pezzi', 'altre', true)}
-                ${card(data.mq_altre, 'Metri quadri', 'altre')}
+                ${card(data.mq_falegnameria ?? data.mq_altre, 'Metri quadri', 'altre')}
                 ${card(data.ore_alt_falextra, 'Ore Falegn. Extra', 'altre')}
                 ${card(data.ore_alt_falrinf, 'Ore Falegn. Rinforzo', 'altre')}
                 ${card(data.ore_alt_fal, 'Tot Ore Falegnameria', 'altre')}
@@ -284,6 +284,8 @@ try {
 
               <div class="card-madre">
                 <h3 class="titolo-sezione">Produzione</h3>
+                ${card(data.pezzi_produzione, 'N. Pezzi', 'altre', true)}
+                ${card(data.mq_produzione, 'Metri quadri', 'altre')}
                 ${card(data.ore_alt_smontaggio, 'Ore Smontaggio', 'altre')}
                 ${card(data.ore_alt_prod, 'Ore Produzione', 'altre')}
               </div>
