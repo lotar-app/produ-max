@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vista Produzione</title>
   <link rel="stylesheet" href="css/layout.css" />
+  <script src="js/auth-guard.js" defer></script>
 </head>
 <body>
   <script src="js/env.js"></script>
@@ -56,8 +57,9 @@
     <aside class="sidebar-filtri">
       <div class="sidebar-header">
         <img src="https://www.lotarpersiane.it/wp-content/uploads/2025/02/Logo-LOTAR-positivo-1.png" alt="Logo" class="logo-sidebar" />
-        <h3 class="titolo-sidebar">LO.TA.R.<br/>PRODU-MAX v. 2.2</h3>
+        <h3 class="titolo-sidebar">LO.TA.R.<br/>PRODU-MAX v. 2.3</h3>
         <p class="ruolo-sidebar">Ruolo: <span id="ruolo-utente"></span></p>
+        <p class="ruolo-sidebar">Utente: <span id="utente-loggato"></span></p>
       </div>
 
       <h2 class="titolo-filtri">🔎 Filtraggio dei dati</h2>
@@ -266,6 +268,11 @@
     // 3. Sidebar: mostra ruolo
     const spanRuolo = document.getElementById('ruolo-utente');
     if (spanRuolo) spanRuolo.textContent = ruolo;
+    const spanUtente = document.getElementById('utente-loggato');
+    if (spanUtente) {
+      const nome = sessionStorage.getItem('authDisplayName') || sessionStorage.getItem('authUsername');
+      spanUtente.textContent = nome || '—';
+    }
 
     <!-- 4. Carica il menu dinamico e poi JS in ordine -->
 fetch(`partials/topnav_${ruolo}.html`)

@@ -1,7 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get('id');
-  const ruolo = urlParams.get('ruolo') || 'admin';
+  let ruolo = null;
+  try {
+    ruolo = sessionStorage.getItem('ruolo');
+  } catch (err) {
+    console.warn('Impossibile leggere il ruolo dalla sessione:', err);
+  }
+  if (!ruolo) {
+    ruolo = urlParams.get('ruolo') || 'admin';
+  }
+  try {
+    sessionStorage.setItem('ruolo', ruolo);
+  } catch (err) {
+    console.warn('Impossibile salvare il ruolo:', err);
+  }
 
   if (!id) {
     alert('ID non fornito');
@@ -62,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
       .then(res => {
         if (!res.ok) return res.text().then(text => { throw new Error(text); });
-        window.location.href = `vista_dinamica.html?ruolo=${ruolo}&success=true`;
+    window.location.href = `vista_dinamica.html?ruolo=${encodeURIComponent(ruolo)}&success=true`;
       })
       .catch(err => {
         console.error('❌ Errore salvataggio:', err);

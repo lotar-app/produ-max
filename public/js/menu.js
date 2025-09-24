@@ -11,9 +11,26 @@ document.addEventListener('DOMContentLoaded', function () {
     menuContainer.classList.toggle('hidden');
   });
 
-  // Ricava il ruolo dalla query string
+  // Ricava il ruolo dalla sessione o query string
   const params = new URLSearchParams(window.location.search);
-  const ruolo = params.get('ruolo') || 'guest';
+  let ruolo = 'guest';
+
+  try {
+    const stored = sessionStorage.getItem('ruolo');
+    if (stored) {
+      ruolo = stored;
+    } else {
+      const fromQuery = params.get('ruolo');
+      if (fromQuery) {
+        ruolo = fromQuery;
+        sessionStorage.setItem('ruolo', fromQuery);
+      }
+    }
+  } catch (err) {
+    console.warn('Impossibile gestire il ruolo per il menu:', err);
+    const fromQuery = params.get('ruolo');
+    if (fromQuery) ruolo = fromQuery;
+  }
 
   // Caricamento dinamico del menu HTML da partials in base al ruolo
   fetch(`partials/menu_${ruolo}.html`)

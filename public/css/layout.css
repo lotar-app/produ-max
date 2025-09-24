@@ -831,6 +831,11 @@ tbody tr:hover {
   align-items: center;
 }
 
+.menu-item.menu-right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
 .menu-item > a {
   padding: 10px 15px;
   display: inline-block;

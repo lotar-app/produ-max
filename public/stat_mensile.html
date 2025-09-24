@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Statistiche Mensili</title>
   <link rel="stylesheet" href="/css/layout.css" />
+  <script src="js/auth-guard.js" defer></script>
 
   <!-- ================== CSS SPECIFICO STATISTICHE (dal file originale) [INIZIO] ================== -->
   <style>
@@ -87,7 +88,10 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const ruoloFromUrl = params.get('ruolo');
-    if (ruoloFromUrl) sessionStorage.setItem('ruolo', ruoloFromUrl);
+    const stored = sessionStorage.getItem('ruolo');
+    if (!stored && ruoloFromUrl) {
+      sessionStorage.setItem('ruolo', ruoloFromUrl);
+    }
   </script>
 
   <!-- Overlay e badge manutenzione -->
@@ -109,7 +113,7 @@
   <!-- Layout uniforme come report_date_mancanti -->
   <div class="layout">
     <!-- Sidebar da parziale -->
-    <div id="sidebar-placeholder"></div>
+   <div id="sidebar-placeholder"></div>
 
     <!-- Contenuto principale -->
     <div class="main-content">
@@ -210,6 +214,11 @@ try {
         document.getElementById('sidebar-placeholder').innerHTML = await rs.text();
         const span = document.getElementById('ruolo-utente');
         if (span) span.textContent = ruolo;
+        const utenteSpan = document.getElementById('utente-loggato');
+        if (utenteSpan) {
+          const nome = sessionStorage.getItem('authDisplayName') || sessionStorage.getItem('authUsername');
+          utenteSpan.textContent = nome || '—';
+        }
         console.log('✅ Sidebar caricata da: partials/sidebar_base.html');
       } catch (err) {
         console.error('❌ Errore caricamento sidebar:', err);

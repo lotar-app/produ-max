@@ -3,6 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const authRoutes = require('./routes/auth');
+const { attachAuth, requireAuth } = require('./middleware/auth');
 
 // 🔌 Connessione DB (serve solo per attivarla all'avvio)
 console.log('✅ server.js avviato');        // appena prima del require
@@ -14,6 +16,7 @@ const app = express();
 // Middleware base
 app.use(cors());
 app.use(express.json());
+app.use(attachAuth);
 
 // Serve i file statici (HTML, JS, CSS) dalla cartella "public"
 app.use(express.static(path.join(__dirname, 'public')));
@@ -24,6 +27,11 @@ app.use('/scripts', express.static(path.join(__dirname, 'scripts')));
 
 // ✅ Collegamento alle API principali
 const apiRoutes = require('./routes/api');
+app.use('/api/auth', authRoutes);
+app.use('/api', (req, res, next) => {
+  if (!req.auth || !req.auth.enabled) return next();
+  return requireAuth(req, res, next);
+});
 app.use('/api', apiRoutes); // carica tutto da routes/api.js
 
 // ✅ Route di test per importazione
