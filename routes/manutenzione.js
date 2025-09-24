@@ -5,7 +5,7 @@ const router = express.Router();
 
 // === Middleware di controllo superadmin ===
 function soloSuperadmin(req, res, next) {
-  const ruolo = req.query.ruolo || req.session?.ruolo;
+  const ruolo = req.query.ruolo || req.auth?.user?.role;
   if (ruolo !== 'superadmin') {
     return res.status(403).send('Accesso negato');
   }

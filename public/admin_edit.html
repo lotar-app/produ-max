@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Modifica completa lavorazione</title>
   <link rel="stylesheet" href="css/layout.css" />
+  <script src="js/auth-guard.js" defer></script>
   <style>
     input[type="checkbox"] {
       transform: scale(1.2);
@@ -38,6 +39,7 @@
         <img src="https://www.lotarpersiane.it/wp-content/uploads/2025/02/Logo-LOTAR-positivo-1.png" alt="Logo" class="logo-sidebar" />
         <h3 class="titolo-sidebar">LO.TA.R.<br/>PRODU-MAX v. 2.2</h3>
         <p class="ruolo-sidebar">Ruolo: <span id="ruolo-utente"></span></p>
+        <p class="ruolo-sidebar">Utente: <span id="utente-loggato"></span></p>
       </div>
     </aside>
 
@@ -142,9 +144,20 @@
   <script src="js/topnav_offset.js"></script>
   <script>
     const params = new URLSearchParams(window.location.search);
-    const ruolo = params.get("ruolo") || sessionStorage.getItem("ruolo") || "admin";
-    sessionStorage.setItem("ruolo", ruolo);
+    const stored = sessionStorage.getItem("ruolo");
+    const fromQuery = params.get("ruolo");
+    const ruolo = stored || fromQuery || "admin";
+    if (!stored && fromQuery) {
+      sessionStorage.setItem("ruolo", fromQuery);
+    } else if (!stored && !fromQuery) {
+      sessionStorage.setItem("ruolo", ruolo);
+    }
     document.getElementById("ruolo-utente").textContent = ruolo;
+    const utenteSpan = document.getElementById("utente-loggato");
+    if (utenteSpan) {
+      const nome = sessionStorage.getItem('authDisplayName') || sessionStorage.getItem('authUsername');
+      utenteSpan.textContent = nome || '—';
+    }
 
     fetch(`partials/topnav_${ruolo}.html`)
       .then(res => res.text())

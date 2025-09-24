@@ -517,8 +517,25 @@ function popolaFiltroTipoLinea(dati) {
 
 //aggiungo la funzione che riconosce il ruolo dell'utente
 function getRuolo() {
+  try {
+    const stored = sessionStorage.getItem('ruolo');
+    if (stored) return stored;
+  } catch (err) {
+    console.warn('Impossibile leggere il ruolo da sessionStorage:', err);
+  }
+
   const params = new URLSearchParams(window.location.search);
-  return params.get('ruolo') || 'sala'; // default: sala
+  const fromQuery = params.get('ruolo');
+  if (fromQuery) {
+    try {
+      sessionStorage.setItem('ruolo', fromQuery);
+    } catch (err) {
+      console.warn('Impossibile salvare il ruolo da query string:', err);
+    }
+    return fromQuery;
+  }
+
+  return 'sala'; // fallback legacy
 }
 
 function archiviaCliente(clienteId) {

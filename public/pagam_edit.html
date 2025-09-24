@@ -5,14 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Modifica Pagamento</title>
   <link rel="stylesheet" href="css/layout.css" />
+  <script src="js/auth-guard.js" defer></script>
 </head>
 <body>
   
   <!-- Titolo base gestito da env.js -->
   <script>
     const params = new URLSearchParams(window.location.search);
-    const ruolo = params.get("ruolo") || sessionStorage.getItem("ruolo") || "admin";
-    if (ruolo) sessionStorage.setItem("ruolo", ruolo);
+    const stored = sessionStorage.getItem("ruolo");
+    const fromQuery = params.get("ruolo");
+    const ruolo = stored || fromQuery || "admin";
+    if (!stored && fromQuery) {
+      sessionStorage.setItem("ruolo", fromQuery);
+    }
+    if (!stored && !fromQuery) {
+      sessionStorage.setItem("ruolo", ruolo);
+    }
   </script>
 
   <!-- Top menu dinamico -->
@@ -37,6 +45,7 @@
         <img src="https://www.lotarpersiane.it/wp-content/uploads/2025/02/Logo-LOTAR-positivo-1.png" alt="Logo" class="logo-sidebar" />
         <h3 class="titolo-sidebar">LO.TA.R.<br/>PRODU-MAX v. 2.2</h3>
         <p class="ruolo-sidebar">Ruolo: <span id="ruolo-utente"></span></p>
+        <p class="ruolo-sidebar">Utente: <span id="utente-loggato"></span></p>
       </div>
     </aside>
 
@@ -102,6 +111,11 @@
       window.location.href = `vista_dinamica.html?ruolo=${ruolo}`;
     }
     document.getElementById("ruolo-utente").textContent = ruolo;
+    const utenteSpan = document.getElementById('utente-loggato');
+    if (utenteSpan) {
+      const nome = sessionStorage.getItem('authDisplayName') || sessionStorage.getItem('authUsername');
+      utenteSpan.textContent = nome || '—';
+    }
 
     // Caricamento topnav da file statico
     fetch(`partials/topnav_${ruolo}.html`)

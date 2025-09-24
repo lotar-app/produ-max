@@ -7,12 +7,26 @@ function normalizzaNumero(val) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const id = new URLSearchParams(window.location.search).get('id');
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  let ruoloCorrente = null;
+  try {
+    ruoloCorrente = sessionStorage.getItem('ruolo');
+  } catch (err) {
+    console.warn('Impossibile leggere il ruolo dalla sessione:', err);
+  }
+  if (!ruoloCorrente) {
+    ruoloCorrente = params.get('ruolo') || 'admin';
+  }
+  try {
+    sessionStorage.setItem('ruolo', ruoloCorrente);
+  } catch (err) {
+    console.warn('Impossibile salvare il ruolo nella sessione:', err);
+  }
   if (!id) {
     alert('ID non specificato');
-    const urlParams = new URLSearchParams(window.location.search);
-const ruolo = urlParams.get('ruolo');
-window.location.href = `vista.html${ruolo ? '?ruolo=' + ruolo : ''}`;
+    const ruolo = ruoloCorrente || 'admin';
+    window.location.href = `vista_dinamica.html?ruolo=${encodeURIComponent(ruolo)}`;
     return;
   }
 
@@ -93,8 +107,8 @@ window.location.href = `vista.html${ruolo ? '?ruolo=' + ruolo : ''}`;
     })
       .then(res => {
         if (!res.ok) return res.text().then(t => { throw new Error(t); });
-        const ruolo = new URLSearchParams(window.location.search).get('ruolo') || 'admin';
-        window.location.href = `vista_dinamica.html?ruolo=${ruolo}&success=true`; 
+        const ruolo = ruoloCorrente || 'admin';
+        window.location.href = `vista_dinamica.html?ruolo=${encodeURIComponent(ruolo)}&success=true`; 
         
       })
       .catch(err => {
