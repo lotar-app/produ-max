@@ -394,7 +394,7 @@ item.totale_ore = sommaOre;           // per l’ordinamento
   ${(() => {
     const ruolo = getRuolo();
     const isSverniciatura = item.tipo_linea?.trim().toLowerCase() === 'sverniciatura';
-    const ruoliAbilitati = ['admin', 'superadmin', 'amministrazione'];
+    const ruoliAbilitati = ['admin', 'superadmin', 'amministrazione', 'gestore'];
     let html = '';
 
     if (!isSverniciatura || ruoliAbilitati.includes(ruolo)) {
@@ -404,27 +404,28 @@ item.totale_ore = sommaOre;           // per l’ordinamento
           html += `<a href="sala_edit.html?id=${item.id}&ruolo=${ruolo}" class="btn">Modifica sala</a>`;
           html += `<a href="admin_edit.html?id=${item.id}&ruolo=${ruolo}" class="btn">Modifica admin</a>`;
           html += `<a href="pagam_edit.html?id=${item.id}&ruolo=${ruolo}" class="btn">Modifica Amm</a>`;
+          html += `<a href="gestore_edit.html?id=${item.id}&ruolo=${ruolo}" class="btn">Modifica Gestore</a>`;
           html += `<button class="btn rosso" onclick="archiviaCliente(${item.id})">Archivia</button>`;
           break;
 
         case 'admin':
-          html += `<a href="admin_edit.html?id=${item.id}&ruolo=${ruolo}" class="btn">Modifica admin</a>`;
+          html += `<a href="admin_edit.html?id=${item.id}&ruolo=${ruolo}" class="btn">Modifica</a>`;
           html += `<button class="btn rosso" onclick="archiviaCliente(${item.id})">Archivia</button>`;
           break;
 
         case 'sala':
           if (!isSverniciatura) {
-            html += `<a href="sala_edit.html?id=${item.id}&ruolo=${ruolo}" class="btn">Modifica sala</a>`;
+            html += `<a href="sala_edit.html?id=${item.id}&ruolo=${ruolo}" class="btn">Modifica</a>`;
           }
           break;
 
         case 'amministrazione':
           console.log('✅ Sono nel case amministrazione per ID:', item.id);
-          html += `<a href="pagam_edit.html?id=${item.id}&ruolo=${ruolo}" class="btn">Modifica Amm</a>`;
+          html += `<a href="pagam_edit.html?id=${item.id}&ruolo=${ruolo}" class="btn">Modifica</a>`;
           break;
 
         case 'gestore':
-          // Nessun pulsante
+          html += `<a href="gestore_edit.html?id=${item.id}&ruolo=${ruolo}" class="btn">Modifica</a>`;
           break;
       }
     }

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modifica Gestore</title>
+  <link rel="stylesheet" href="css/layout.css">
+  <script src="js/auth-guard.js" defer></script>
+  <script src="js/gestore_edit.js" defer></script>
+</head>
+<body>
+  <div id="env-badge" style="position: fixed; top: 10px; right: 10px; padding: 6px 12px; border-radius: 4px; font-weight: bold; z-index: 9999;"></div>
+  <script src="js/env.js"></script>
+
+  <div id="top-menu-placeholder"></div>
+  <div id="overlay-manutenzione" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: white; z-index: 99999; text-align: center; padding-top: 100px;">
+    <h1>🚧 Modalità Manutenzione</h1>
+    <p>Il sistema è temporaneamente non disponibile.</p>
+  </div>
+
+  <div class="layout-container">
+    <aside class="sidebar-filtri">
+      <div class="sidebar-header">
+        <img src="https://www.lotarpersiane.it/wp-content/uploads/2025/02/Logo-LOTAR-positivo-1.png" alt="Logo" class="logo-sidebar" />
+        <h3 class="titolo-sidebar">LO.TA.R.<br/>PRODU-MAX v. 2.3</h3>
+        <p class="ruolo-sidebar">Ruolo: <span id="ruolo-utente"></span></p>
+        <p class="ruolo-sidebar">Utente: <span id="utente-loggato"></span></p>
+      </div>
+    </aside>
+
+    <main class="contenuto-principale">
+      <div class="form-wrapper">
+        <h2>Modifica lavorazione - Gestore</h2>
+
+        <div class="readonly-field">
+          <label>ID lavorazione</label>
+          <div id="info-id" class="readonly-box">—</div>
+        </div>
+
+        <div class="readonly-field">
+          <label>Nome cliente</label>
+          <div id="info-nome" class="readonly-box">—</div>
+        </div>
+
+        <div class="readonly-field">
+          <label>Tipo cliente</label>
+          <div id="info-tipo-cliente" class="readonly-box">—</div>
+        </div>
+
+        <div class="readonly-field">
+          <label>Tipo lavorazione</label>
+          <div id="info-tipo-lavorazione" class="readonly-box">—</div>
+        </div>
+
+        <div class="readonly-field">
+          <label>Tipo linea</label>
+          <div id="info-tipo-linea" class="readonly-box">—</div>
+        </div>
+
+        <div class="readonly-field">
+          <label>Pezzi</label>
+          <div id="info-pezzi" class="readonly-box">—</div>
+        </div>
+
+        <form id="gestore-form" class="form-grid">
+          <label class="form-field">
+            <span>Ordine vernice</span>
+            <input type="checkbox" id="ordine-vernice">
+          </label>
+
+          <label class="form-field">
+            <span>Fermo</span>
+            <input type="checkbox" id="fermo">
+          </label>
+
+          <label class="form-field">
+            <span>Viaggio</span>
+            <input type="date" id="viaggio">
+          </label>
+
+          <div class="form-actions">
+            <button type="submit">Salva modifiche</button>
+            <button type="button" id="annulla-btn" class="btn-secondary">Annulla</button>
+          </div>
+        </form>
+
+        <div id="messaggio" class="success-message" style="display: none;"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/topnav_offset.js"></script>
+</body>
+</html>

@@ -259,6 +259,39 @@ router.put('/sala/:id', (req, res) => {
 });
 
 
+router.put('/gestore/:id', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!Number.isInteger(id)) {
+    return res.status(400).send('ID non valido');
+  }
+
+  const { ordine_vernice, standby, viaggio } = req.body || {};
+
+  const ordineValue = ordine_vernice ? 1 : 0;
+  const standbyValue = standby ? 1 : 0;
+  const viaggioValue = viaggio && viaggio.trim() !== '' ? viaggio.trim() : null;
+
+  const query = `
+    UPDATE produzione
+    SET ordine_vernice = ?, standby = ?, viaggio = ?
+    WHERE id = ?
+  `;
+
+  db.query(query, [ordineValue, standbyValue, viaggioValue, id], (err, result) => {
+    if (err) {
+      console.error('❌ Errore aggiornamento gestore:', err);
+      return res.status(500).send('Errore salvataggio');
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).send('Lavorazione non trovata');
+    }
+
+    res.send('✅ Aggiornamento gestore completato');
+  });
+});
+
+
 
 // 🔽 PUT: aggiornamento completo da admin_edit.html
 router.put('/admin/:id', (req, res) => {
