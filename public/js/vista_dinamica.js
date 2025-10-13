@@ -30,6 +30,8 @@ const filtroACorpo = $('filtro-a-corpo');
 const filtroTrasparente = $('filtro-trasparente');
 const filtroStandby = $('filtro-standby');
 const filtroNomeVuoto = $('filtro-nome-vuoto');
+const filtroSoloFiniti = $('filtro-solo-finiti');
+const filtroSoloDaFinire = $('filtro-solo-da-finire');
 const resetFiltri = $('reset-filtri');
 
 // === PRECOMPILA DA LOCALSTORAGE ===
@@ -55,6 +57,16 @@ if (filtroNomeVuoto) {
   if (val) filtroNomeVuoto.value = val;
   else { filtroNomeVuoto.value = 'pieni'; localStorage.setItem('filtroNomeVuoto', 'pieni'); }
 }
+if (filtroSoloFiniti || filtroSoloDaFinire) {
+  const finitiLS = localStorage.getItem('filtroSoloFiniti') === 'true';
+  const daFinireLS = localStorage.getItem('filtroSoloDaFinire') === 'true';
+  if (filtroSoloFiniti) filtroSoloFiniti.checked = finitiLS;
+  if (filtroSoloDaFinire) filtroSoloDaFinire.checked = daFinireLS && !finitiLS;
+  if (finitiLS && daFinireLS && filtroSoloDaFinire) {
+    filtroSoloDaFinire.checked = false;
+    localStorage.setItem('filtroSoloDaFinire', 'false');
+  }
+}
 
 // === SALVA + REFRESH ===
 function salvaFiltri() {
@@ -76,6 +88,8 @@ function salvaFiltri() {
   localStorage.setItem('filtroTrasparente', filtroTrasparente?.checked || false);
   localStorage.setItem('filtroStandby', filtroStandby?.checked || false);
   localStorage.setItem('filtroNomeVuoto', filtroNomeVuoto?.value || 'tutti');
+  localStorage.setItem('filtroSoloFiniti', filtroSoloFiniti?.checked || false);
+  localStorage.setItem('filtroSoloDaFinire', filtroSoloDaFinire?.checked || false);
 
   if (window.produzioneDati && window.aggiornaTabella) window.aggiornaTabella(window.produzioneDati);
 }
@@ -90,6 +104,20 @@ filtriInput.forEach(el => el && el.addEventListener('input', salvaFiltri));
 
 [filtroUrgente, filtroVernice, filtroACorpo, filtroTrasparente, filtroStandby]
   .forEach(el => el && el.addEventListener('change', salvaFiltri));
+
+if (filtroSoloFiniti && filtroSoloDaFinire) {
+  filtroSoloFiniti.addEventListener('change', () => {
+    if (filtroSoloFiniti.checked) filtroSoloDaFinire.checked = false;
+    salvaFiltri();
+  });
+  filtroSoloDaFinire.addEventListener('change', () => {
+    if (filtroSoloDaFinire.checked) filtroSoloFiniti.checked = false;
+    salvaFiltri();
+  });
+} else {
+  if (filtroSoloFiniti) filtroSoloFiniti.addEventListener('change', salvaFiltri);
+  if (filtroSoloDaFinire) filtroSoloDaFinire.addEventListener('change', salvaFiltri);
+}
 
 resetFiltri && resetFiltri.addEventListener('click', () => {
   localStorage.removeItem('filtroNome');
@@ -109,7 +137,11 @@ resetFiltri && resetFiltri.addEventListener('click', () => {
   localStorage.removeItem('filtroACorpo');
   localStorage.removeItem('filtroTrasparente');
   localStorage.removeItem('filtroStandby');
+  localStorage.removeItem('filtroSoloFiniti');
+  localStorage.removeItem('filtroSoloDaFinire');
   localStorage.setItem('filtroNomeVuoto', 'pieni');
+  if (filtroSoloFiniti) filtroSoloFiniti.checked = false;
+  if (filtroSoloDaFinire) filtroSoloDaFinire.checked = false;
   if (window.produzioneDati && window.aggiornaTabella) window.aggiornaTabella(window.produzioneDati);
 });
 
@@ -207,6 +239,9 @@ function aggiornaTabella(dati) {
   const filtroRAL1 = (localStorage.getItem('filtroRAL1') || '').toLowerCase().trim();
   const filtroRAL2 = (localStorage.getItem('filtroRAL2') || '').toLowerCase().trim();
   const filtroStandby = localStorage.getItem('filtroStandby') === 'true';
+  const soloFinitiAttivo = localStorage.getItem('filtroSoloFiniti') === 'true';
+  const soloDaFinireAttivo = localStorage.getItem('filtroSoloDaFinire') === 'true';
+  const filtroNomeVuoto = localStorage.getItem('filtroNomeVuoto') || 'tutti';
 
   const datiOrdinati = window.ordinaDati(dati);
 
@@ -235,18 +270,24 @@ function aggiornaTabella(dati) {
     const finitoAdminMatch = !filtroFinitoAdmin || formatDateForInput(item.finito_admin) === filtroFinitoAdmin;
     const consegnaMatch = !filtroConsegna || formatDateForInput(item.consegna) === filtroConsegna;
 
-    const progressivoMatch = !filtroProgressivo || String(item.n_progressivo || '').includes(filtroProgressivo);
+    const progressivoSearchMatch = !filtroProgressivo || String(item.n_progressivo || '').includes(filtroProgressivo);
 
     const aCorpoMatch = !filtroACorpo || item.a_corpo;
     const trasparenteMatch = !filtroTrasparente || item.trasparente;
 
-    const filtroNomeVuoto = localStorage.getItem('filtroNomeVuoto') || 'tutti';
     const nomeLavoro = item.nome_lavoro?.trim() || '';
 
     const nomeVuotoMatch =
       filtroNomeVuoto === 'tutti' ||
       (filtroNomeVuoto === 'vuoti' && nomeLavoro === '') ||
       (filtroNomeVuoto === 'pieni' && nomeLavoro !== '');
+
+    const progressivo = item.n_progressivo;
+    const haProgressivo = progressivo !== null && progressivo !== undefined && String(progressivo).trim() !== '';
+    const statoProgressivoMatch =
+      (!soloFinitiAttivo && !soloDaFinireAttivo) ||
+      (soloFinitiAttivo && haProgressivo) ||
+      (soloDaFinireAttivo && !haProgressivo);
 
     return (
       nomeMatch &&
@@ -262,10 +303,11 @@ function aggiornaTabella(dati) {
       falegnameriaMatch &&
       finitoAdminMatch &&
       consegnaMatch &&
-      progressivoMatch &&
+      progressivoSearchMatch &&
       aCorpoMatch &&
       trasparenteMatch &&
       nomeVuotoMatch &&
+      statoProgressivoMatch &&
       (!filtroStandby || item.standby === 1)
     );
   });
